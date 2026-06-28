@@ -1,0 +1,11 @@
+{
+  "name": "night-shift-checkout-incident",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test",
+    "simulate": "node scripts/simulate-api.js",
+    "query:coupon": "node scripts/query-fixture.js"
+  }
+}

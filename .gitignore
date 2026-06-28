@@ -1,0 +1,23 @@
+# Godot local/editor state
+.godot/
+.import/
+export.cfg
+
+# Node and test/build output
+node_modules/
+npm-debug.log*
+coverage/
+dist/
+build/
+
+# Runtime scratch state
+*.log
+*.tmp
+.env
+.env.*
+
+# OS/editor noise
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

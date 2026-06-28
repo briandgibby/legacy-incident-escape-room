@@ -1,0 +1,65 @@
+{
+  "title": "Night Shift Checkout",
+  "timer_minutes": 60,
+  "incident_status": "SEV-2 active. Checkout discounts are failing.",
+  "brief": "At 01:17 UTC, support reported that the LATE-NIGHT-15 checkout promotion stopped applying on web orders. The coupon exists, marketing insists the campaign is active, and a schema migration landed yesterday. Restore the customer-facing checkout quote without breaking legacy coupons.",
+  "objectives": [
+    "Read the incident evidence before editing code.",
+    "Use the API simulation and tests to identify the mismatch.",
+    "Make the smallest realistic code change in src/discounts.js.",
+    "Preserve old percent-based coupons while supporting the migrated schema.",
+    "Deploy only after tests and the production replay agree."
+  ],
+  "realism_rules": [
+    "Use real JavaScript syntax and normal Node test output.",
+    "Treat SQL files as production evidence, not puzzle decoration.",
+    "The helper can nudge diagnosis but will not write the fix.",
+    "The timer changes score and ending tone, but solving remains possible."
+  ],
+  "clues": [
+    {
+      "id": "sticky-db",
+      "title": "Sticky note: read-only DB",
+      "body": "readonly@warehouse.internal\nschema: marketing\nDo not trust the admin UI cache after midnight launches."
+    },
+    {
+      "id": "git-diff",
+      "title": "Printout: migration diff",
+      "body": "--- marketing.coupon_rules\n- discount_percent numeric(5,2)\n+ discount_basis_points integer not null default 0\n\nMargin note: 'Keep old field for rollback. App cleanup can happen later.'"
+    },
+    {
+      "id": "support-ticket",
+      "title": "Support ticket #4812",
+      "body": "Customers see the LATE-NIGHT-15 banner, but checkout shows a zero dollar discount. Agents can reproduce only on the web channel. Mobile uses an older coupon endpoint."
+    },
+    {
+      "id": "dashboard",
+      "title": "Checkout dashboard",
+      "body": "Promotion impressions are normal. Quote API p95 is normal. Coupon accepted count is normal. Discount amount dropped to zero at 01:17 UTC."
+    },
+    {
+      "id": "half-doc",
+      "title": "Legacy pricing doc",
+      "body": "discount_percent is a whole-number percentage. Example: 15 means 15 percent. Last reviewed 2024-02-11. A handwritten note says: 'Ask Priya about basis points before touching this.'"
+    }
+  ],
+  "hints": [
+    "Separate three questions: is the coupon active, is it selected, and is the selected coupon worth anything?",
+    "The dashboard says coupon accepted count is normal. That makes validation less suspicious than value calculation.",
+    "Compare the migration printout with the field read inside src/discounts.js.",
+    "Basis points are hundredths of a percent. 1500 basis points means 15 percent.",
+    "A good fix should support discount_basis_points without breaking older discount_percent rows."
+  ],
+  "repo_files": [
+    "README.md",
+    "package.json",
+    "src/checkout.js",
+    "src/discounts.js",
+    "src/fixtures.js",
+    "test/checkout.test.js",
+    "scripts/simulate-api.js",
+    "scripts/query-fixture.js",
+    "sql/schema.sql",
+    "sql/diagnostics.sql"
+  ]
+}
