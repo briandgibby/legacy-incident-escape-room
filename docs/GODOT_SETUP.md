@@ -22,10 +22,11 @@ C:\Users\Jack Thompson\AppData\Local\Microsoft\WinGet\Packages\GodotEngine.Godot
 ## Open the project
 
 ```powershell
-godot --path "C:\Users\Jack Thompson\git-projects\legacy-incident-escape-room\godot"
+cd "C:\Users\Jack Thompson\git-projects\legacy-incident-escape-room"
+.\scripts\open-godot.ps1
 ```
 
-If `godot` is not available in the current terminal yet, use the direct executable path above.
+The script uses `godot` when the alias is available, otherwise it falls back to the WinGet executable path.
 
 ## Verify the project
 
@@ -36,3 +37,7 @@ npm run simulate
 ```
 
 Those commands fail in the starting state by design. A correct player fix should make both pass, and the in-game deploy action runs the same checks through `godot/tools/level_runner.mjs`.
+
+## Export templates
+
+Export templates are not installed yet. They are only needed when producing a distributable Windows build. The editor and headless project checks work without them.
