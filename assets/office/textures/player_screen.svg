@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1000" viewBox="0 0 1600 1000">
+  <title>Rifkin Software night operations workstation</title>
+  <desc>Editable, monochrome workplace interface with a pending checkout and one message from Joel.</desc>
+  <rect width="1600" height="1000" fill="#101923"/>
+  <rect x="32" y="32" width="1536" height="936" rx="3" fill="none" stroke="#31404d" stroke-width="2"/>
+  <g fill="none" stroke="#9aadb9" stroke-width="5">
+    <path d="M138 79 H102 V121 H138"/>
+    <path d="M120 95 H156 V137 H120"/>
+  </g>
+  <text x="190" y="125" font-family="Segoe UI, sans-serif" font-size="37" letter-spacing="5" fill="#d8e2e6">RIFKIN SOFTWARE</text>
+  <text x="1470" y="121" text-anchor="end" font-family="Consolas, monospace" font-size="27" fill="#899eac">01:17 UTC</text>
+  <path d="M96 174 H1504" fill="none" stroke="#31404d" stroke-width="2"/>
+  <text x="100" y="238" font-family="Consolas, monospace" font-size="26" letter-spacing="2" fill="#91a5b2">NIGHT OPERATIONS</text>
+  <circle cx="1018" cy="228" r="6" fill="#b0bec5"/>
+  <text x="1470" y="238" text-anchor="end" font-family="Consolas, monospace" font-size="26" fill="#b0bec5">WORKSTATION 04 / ONLINE</text>
+  <text x="96" y="404" font-family="Segoe UI, sans-serif" font-size="73" font-weight="300" fill="#e4ebed">NIGHT SHIFT CHECKOUT</text>
+  <text x="100" y="474" font-family="Segoe UI, sans-serif" font-size="30" fill="#97a9b5">End-of-shift review is waiting.</text>
+  <rect x="98" y="553" width="1056" height="116" fill="#192734" stroke="#607581" stroke-width="2"/>
+  <rect x="130" y="598" width="23" height="23" fill="none" stroke="#d0dce1" stroke-width="3"/>
+  <path d="M130 598 L141.5 609 L153 598" fill="none" stroke="#d0dce1" stroke-width="2"/>
+  <text x="186" y="624" font-family="Consolas, monospace" font-size="35" fill="#dbe5e9">1 MESSAGE FROM JOEL</text>
+  <text x="1094" y="624" text-anchor="end" font-family="Consolas, monospace" font-size="29" fill="#8ea3b0">[ UNREAD ]</text>
+  <text x="100" y="740" font-family="Consolas, monospace" font-size="24" fill="#8299a7">CHECKOUT STATUS   PENDING REVIEW</text>
+  <path d="M96 815 H1504" fill="none" stroke="#31404d" stroke-width="2"/>
+  <text x="100" y="881" font-family="Consolas, monospace" font-size="27" fill="#92a8b5">rifkin@ops-04:~$</text>
+  <rect x="353" y="865" width="14" height="22" fill="#92a8b5"/>
+  <text x="1470" y="881" text-anchor="end" font-family="Consolas, monospace" font-size="23" fill="#677f8e">SESSION CONNECTED</text>
+  <text x="100" y="934" font-family="Consolas, monospace" font-size="18" letter-spacing="1.5" fill="#536e7f">OPERATIONS / INTERNAL</text>
+</svg>

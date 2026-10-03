@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="800" viewBox="0 0 1000 800">
+  <title>Joel's welcome note</title>
+  <desc>Editable handwriting on warm cream office paper.</desc>
+  <rect width="1000" height="800" fill="#e9dfc7"/>
+  <path d="M0 44 H1000 M0 753 H1000" stroke="#d6ccb5" stroke-width="1" fill="none"/>
+  <g font-family="Segoe Print, Segoe UI, sans-serif" font-size="45" fill="#3c4143">
+    <text x="91" y="157" transform="rotate(-0.7 91 157)">Welcome to Rifkin.</text>
+    <text x="90" y="260" transform="rotate(0.4 90 260)">Your login is ready.</text>
+    <text x="91" y="362" transform="rotate(-0.4 91 362)">Please stay at your terminal.</text>
+    <text x="91" y="463" transform="rotate(0.2 91 463)">I will leave the next steps here.</text>
+    <text x="106" y="646" font-size="53" transform="rotate(-1.6 106 646)">— Joel</text>
+  </g>
+</svg>

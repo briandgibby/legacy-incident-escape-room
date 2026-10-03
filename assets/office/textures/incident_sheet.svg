@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="1200" viewBox="0 0 900 1200">
+  <title>Rifkin Software incident 4812 sheet</title>
+  <desc>Editable internal incident report with neutral document details and no resolution.</desc>
+  <rect width="900" height="1200" fill="#eeeee8"/>
+  <text x="72" y="92" font-family="Segoe UI, sans-serif" font-size="23" font-weight="600" letter-spacing="1.1" fill="#444b4e">RIFKIN SOFTWARE / INCIDENT 4812</text>
+  <path d="M72 120 H828" stroke="#758080" stroke-width="2" fill="none"/>
+  <text x="72" y="205" font-family="Segoe UI, sans-serif" font-size="45" font-weight="400" fill="#293237">NIGHT SHIFT CHECKOUT</text>
+  <text x="72" y="264" font-family="Consolas, monospace" font-size="25" fill="#737c7c">01:17 UTC</text>
+  <text x="72" y="368" font-family="Segoe UI, sans-serif" font-size="21" letter-spacing="2" fill="#707879">CASE SUMMARY</text>
+  <text x="72" y="426" font-family="Segoe UI, sans-serif" font-size="35" fill="#303a3d">Coupon accepted. Discount missing.</text>
+  <path d="M72 473 H828" stroke="#b5bcba" stroke-width="1.5" fill="none"/>
+  <text x="72" y="540" font-family="Segoe UI, sans-serif" font-size="30" fill="#454f50">Review evidence before making changes.</text>
+  <text x="72" y="649" font-family="Consolas, monospace" font-size="19" letter-spacing="1" fill="#777f7d">REVIEW RECORD</text>
+  <g fill="#788280">
+    <rect x="72" y="689" width="153" height="12"/>
+    <rect x="247" y="689" width="254" height="12"/>
+    <rect x="518" y="689" width="94" height="12"/>
+    <rect x="72" y="743" width="325" height="12"/>
+    <rect x="416" y="743" width="201" height="12"/>
+    <rect x="72" y="797" width="126" height="12"/>
+    <rect x="220" y="797" width="372" height="12"/>
+  </g>
+  <g fill="none" stroke="#c1c7c3" stroke-width="1.5">
+    <path d="M72 720 H828 M72 774 H828 M72 828 H828 M72 882 H828 M72 936 H828"/>
+  </g>
+  <path d="M72 1080 H828" stroke="#a6aeaa" stroke-width="1.5" fill="none"/>
+  <text x="72" y="1124" font-family="Consolas, monospace" font-size="18" letter-spacing="1" fill="#7c8580">INTERNAL / OPERATIONS</text>
+  <text x="828" y="1124" text-anchor="end" font-family="Consolas, monospace" font-size="18" fill="#7c8580">01</text>
+</svg>
