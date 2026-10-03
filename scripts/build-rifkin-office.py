@@ -39,7 +39,7 @@ scene["stage"] = "Night Shift Checkout / tutorial office"
 scene["asset_scope"] = "Player cubicle and surrounding static office; no gameplay wiring"
 
 collections = {}
-for name in ("00_Room", "01_PlayerCubicle", "02_EmptyWorkstations", "03_OfficeDetails", "04_Lighting", "05_Cameras", "06_GodotLights"):
+for name in ("00_Room", "01_PlayerCubicle", "02_EmptyWorkstations", "03_OfficeDetails", "04_Lighting", "05_Cameras", "06_GodotLights", "07_Exterior"):
     collection = bpy.data.collections.new(name)
     scene.collection.children.link(collection)
     collections[name] = collection
@@ -246,7 +246,11 @@ def area_light(name, location, target, energy, color, size, size_y=None):
 box("Floor", (0, 0.5, -0.09), (14, 13, 0.18), carpet)
 surface("Carpet surface", (0, 0.5, 0.005), 14, 13, carpet, repeats=(28, 26))
 box("Wall west", (-7.05, 0.5, 1.65), (0.14, 13, 3.3), paint)
-box("Wall east", (7.05, 0.5, 1.65), (0.14, 13, 3.3), paint)
+# The open window overlooks the retention equipment below the office floor.
+box("Wall east south of window", (7.05, -3.4, 1.65), (0.14, 5.2, 3.3), paint)
+box("Wall east north of window", (7.05, 4.55, 1.65), (0.14, 4.9, 3.3), paint)
+box("Wall east beneath window", (7.05, 0.65, 0.4), (0.14, 2.9, 0.8), paint)
+box("Wall east above window", (7.05, 0.65, 3.1), (0.14, 2.9, 0.4), paint)
 box("Wall north", (0, 7.05, 1.65), (14.2, 0.14, 3.3), paint)
 box("Wall south", (0, -6.05, 1.65), (14.2, 0.14, 3.3), paint)
 for x in (-6.98, 6.98):
@@ -390,11 +394,88 @@ for x in (4.9, 5.8):
 box("Vent grille backing", (-6.955, 3.25, 2.80), (0.03, 1.05, 0.22), black)
 for z in range(7):
     box("Vent grille slat", (-6.93, 3.25, 2.71 + z * 0.027), (0.021, 1.05, 0.012), trim)
-box("Sealed interior window frame", (6.947, 0.65, 1.95), (0.055, 2.45, 1.35), trim)
-box("Sealed interior window", (6.912, 0.65, 1.95), (0.035, 2.36, 1.25), off_screen)
-for y in range(15):
-    box("Closed blind slat", (6.885, -0.45 + y * 0.15, 1.95), (0.025, 0.10, 1.23), keyboard_mat, 0.002)
+for y in (-0.8, 2.1):
+    box("Window vertical frame", (6.99, y, 1.85), (0.16, 0.055, 2.16), trim, 0.004)
+for z in (0.8, 2.9):
+    box("Window horizontal frame", (6.99, 0.65, z), (0.16, 2.94, 0.055), trim, 0.004)
+box("Window sill", (6.89, 0.65, 0.79), (0.31, 3.0, 0.045), trim, 0.008)
+glass = material("Clear sealed safety glass", (0.64, 0.76, 0.72), 0.12)
+glass.diffuse_color = (0.64, 0.76, 0.72, 0.025)
+glass.node_tree.nodes["Principled BSDF"].inputs["Alpha"].default_value = 0.025
+glass.surface_render_method = "DITHERED"
+box("Window safety glass", (7.015, 0.65, 1.85), (0.016, 2.84, 2.04), glass)
+
+cork = material("Faded bulletin board cork", (0.32, 0.29, 0.20), 0.94)
+box("Workplace bulletin board", (6.925, -2.7, 1.7), (0.085, 1.72, 1.27), cork, 0.008)
+for y in (-3.58, -1.82):
+    box("Bulletin board frame", (6.864, y, 1.7), (0.06, 0.035, 1.31), trim)
+for z in (1.045, 2.355):
+    box("Bulletin board frame", (6.864, -2.7, z), (0.06, 1.79, 0.035), trim)
+notice_mat = texture_material("Perimeter retention installation notice", "workplace_notice.png", 0.94)
+surface("WorkplaceNotice", (6.869, -2.25, 1.71), 0.72, 0.96, notice_mat, rotation=(math.pi / 2, 0, -math.pi / 2))
+shift_mat = texture_material("Extended shift policy", "shift_notice.png", 0.94)
+surface("Extended shift coverage notice", (6.865, -3.11, 1.79), 0.53, 0.729, shift_mat, rotation=(math.pi / 2, 0, -math.pi / 2))
+for y in (-2.25, -3.11):
+    box("Bulletin notice pin", (6.857, y, 2.185), (0.015, 0.018, 0.018), black, 0.003)
 label("Floor wayfinding", "OPERATIONS   /   04", (-6.945, -3.9, 1.6), 0.075, trim, rotation=(math.pi / 2, 0, math.pi / 2))
+
+# A narrow, faceless service court makes the exterior feel like more of the workplace.
+current_collection = collections["07_Exterior"]
+concrete = material("Weathered exterior concrete", (0.105, 0.125, 0.117), 0.95)
+netting = material("Retention net woven cord", (0.29, 0.33, 0.28), 0.86)
+outside_window = material("Exterior dark office glass", (0.011, 0.028, 0.030), 0.32)
+occupied_window = material("Exterior fluorescent office glass", (0.29, 0.40, 0.36), 0.75, emission=0.7)
+dim_window = material("Exterior dim office glass", (0.095, 0.125, 0.098), 0.75, emission=0.22)
+box("Opposing office facade", (17.5, 0.5, -7.2), (0.5, 24, 28), concrete)
+for y in (-11.5, 12.5):
+    box("Service court side facade", (12.25, y, -7.2), (10.5, 0.5, 28), concrete)
+box("Court floor far below", (12.25, 0.5, -21.2), (10.5, 24, 0.4), concrete)
+rng = random.Random(74)
+for floor in range(8):
+    z = 4.4 - floor * 3.15
+    box("Opposing facade floor seam", (17.236, 0.5, z - 1.03), (0.025, 24, 0.07), trim)
+    for bay in range(12):
+        y = -10.45 + bay * 1.95
+        window_mat = rng.choices((outside_window, dim_window, occupied_window), weights=(5, 2, 3))[0]
+        box("Opposing office window", (17.235, y, z), (0.035, 1.36, 1.79), window_mat)
+        box("Opposing office mullion", (17.202, y, z), (0.022, 0.025, 1.79), trim)
+        box("Opposing window sill", (17.18, y, z - 0.92), (0.15, 1.49, 0.08), concrete)
+
+def retention_net(name, height):
+    # One mesh carries the full sagging lattice, rather than hundreds of separate ropes.
+    columns, rows = 16, 36
+    verts = []
+    for row in range(rows + 1):
+        v = row / rows
+        for column in range(columns + 1):
+            u = column / columns
+            verts.append((7.18 + 5.25 * u, -5.65 + 12.15 * v,
+                          height - 0.85 * math.sin(math.pi * u) * math.sin(math.pi * v)))
+    faces = []
+    for row in range(rows):
+        for column in range(columns):
+            a = row * (columns + 1) + column
+            faces.append((a, a + 1, a + columns + 2, a + columns + 1))
+    mesh = bpy.data.meshes.new(name)
+    mesh.from_pydata(verts, [], faces)
+    obj = bpy.data.objects.new(name, mesh)
+    current_collection.objects.link(obj)
+    obj.data.materials.append(netting)
+    weave = obj.modifiers.new("Woven retention lattice", "WIREFRAME")
+    weave.thickness = 0.019
+    weave.use_even_offset = True
+    weave.use_boundary = True
+    for x in (7.18, 12.43):
+        rod(name + " edge cable", (x, -5.65, height), (x, 6.5, height), 0.034, steel)
+    for y in (-5.65, 6.5):
+        rod(name + " end cable", (7.18, y, height), (12.43, y, height), 0.034, steel)
+    for y in (-5.65, -2.6, 0.425, 3.45, 6.5):
+        rod(name + " support bracket", (7.10, y, height - 0.7), (12.43, y, height), 0.055, steel)
+    return obj
+
+retention_net("Perimeter retention net upper", -0.95)
+retention_net("Perimeter retention net lower", -4.10)
+area_light("Service court reflected light", (10.1, 0.5, 4.1), (10.1, 0.5, -1.6), 45, (0.48, 0.64, 0.58), 5.0)
 
 # Two review cameras; the primary view is at standing player eye level.
 current_collection = collections["05_Cameras"]
@@ -411,6 +492,8 @@ def camera(name, location, target, lens):
 
 cubicle_camera = camera("Cubicle review", (-2.5, -3.67, 1.64), (-2.65, -1.60, 1.18), 23)
 room_camera = camera("Office review", (5.7, -5.48, 2.12), (-1.6, 1.0, 1.45), 24)
+outside_camera = camera("Exterior review", (6.65, 0.62, 1.64), (9.5, 0.62, -1.7), 20)
+notice_camera = camera("Workplace notice review", (5.05, -2.71, 1.70), (6.869, -2.70, 1.70), 30)
 scene.camera = cubicle_camera
 scene.world = bpy.data.worlds.new("Night office ambient")
 scene.world.use_nodes = True
@@ -460,7 +543,7 @@ bpy.ops.object.select_all(action="DESELECT")
 player.select_set(True)
 bpy.context.view_layer.objects.active = player
 bpy.ops.wm.save_as_mainfile(filepath=str(SOURCE))
-for review_camera, name in ((cubicle_camera, "cubicle"), (room_camera, "office")):
+for review_camera, name in ((cubicle_camera, "cubicle"), (room_camera, "office"), (outside_camera, "exterior"), (notice_camera, "workplace_notice")):
     scene.camera = review_camera
     scene.render.filepath = str(PREVIEWS / f"{name}.png")
     bpy.ops.render.render(write_still=True)

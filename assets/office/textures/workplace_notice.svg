@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1600" viewBox="0 0 1200 1600">
+  <title>Rifkin Software perimeter retention installation notice</title>
+  <desc>An editable corporate notice that euphemizes three engineers' deaths as accidents.</desc>
+  <rect width="1200" height="1600" fill="#e6e1d0"/>
+  <g font-family="Segoe UI, sans-serif" fill="#303933">
+    <text x="90" y="125" font-size="44" letter-spacing="3">RIFKIN SOFTWARE</text>
+    <text x="90" y="185" font-size="26" letter-spacing="2">OPERATIONS / FLOOR 04</text>
+    <path d="M90 230 H1110" stroke="#5b655a" stroke-width="3"/>
+    <text x="90" y="330" font-size="57" font-weight="600">PERIMETER RETENTION</text>
+    <text x="90" y="402" font-size="57" font-weight="600">SYSTEM</text>
+    <text x="90" y="470" font-size="31" letter-spacing="2">INSTALLATION NOTICE</text>
+    <g font-size="43">
+      <text x="90" y="610">Following three recent accidents</text>
+      <text x="90" y="675">involving software engineers,</text>
+      <text x="90" y="740">perimeter retention nets have</text>
+      <text x="90" y="805">been installed.</text>
+      <text x="90" y="935">Extended shifts remain mandatory.</text>
+      <text x="90" y="1040">Unscheduled absence is recorded</text>
+      <text x="90" y="1105">by Panopticon.</text>
+      <text x="90" y="1235">Please return to your assigned</text>
+      <text x="90" y="1300">terminal.</text>
+    </g>
+    <path d="M90 1380 H1110" stroke="#7a8175" stroke-width="2"/>
+    <text x="90" y="1465" font-size="38">Joel / Operations</text>
+    <text x="90" y="1535" font-size="25" letter-spacing="2">PRESENCE IS A CONDITION OF EMPLOYMENT</text>
+  </g>
+</svg>

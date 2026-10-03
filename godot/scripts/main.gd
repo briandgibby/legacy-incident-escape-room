@@ -1,9 +1,11 @@
 extends Control
 
+signal return_to_office
+signal action_observed(action: String)
+
 const LEVEL_PATH := "res://levels/night_shift_checkout/level.json"
 const INCIDENT_REPO_ROOT := "res://levels/night_shift_checkout/incident_repo"
 const EDIT_FILE := "src/discounts.js"
-const OFFICE_VIEW := preload("res://scripts/office_view.gd")
 
 var level: Dictionary = {}
 var sandbox_path := ""
@@ -48,7 +50,19 @@ func _load_level() -> void:
 		level = {}
 
 
+func _input(event: InputEvent) -> void:
+	if is_visible_in_tree() and event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_ESCAPE:
+		get_viewport().set_input_as_handled()
+		return_to_office.emit()
+
+
 func _build_ui() -> void:
+	var background := ColorRect.new()
+	background.color = Color(0.055, 0.065, 0.06)
+	background.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	background.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	add_child(background)
+
 	var root := VBoxContainer.new()
 	root.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	root.add_theme_constant_override("separation", 8)
@@ -58,7 +72,7 @@ func _build_ui() -> void:
 	body.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	body.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	body.split_offset = 360
-	body.add_child(_build_office_panel())
+	body.add_child(_build_clue_panel())
 	body.add_child(_build_workstation())
 	root.add_child(body)
 	add_child(root)
@@ -86,24 +100,27 @@ func _build_top_bar() -> Control:
 	score_label.add_theme_font_size_override("font_size", 22)
 	bar.add_child(score_label)
 
+	var return_button := Button.new()
+	return_button.name = "ReturnToOffice"
+	return_button.text = "Return to cubicle [Esc]"
+	return_button.pressed.connect(func(): return_to_office.emit())
+	bar.add_child(return_button)
+
 	panel.add_child(bar)
 	return panel
 
 
-func _build_office_panel() -> Control:
+func _build_clue_panel() -> Control:
 	var panel := PanelContainer.new()
 	panel.custom_minimum_size = Vector2(340, 0)
 	var box := VBoxContainer.new()
 	box.add_theme_constant_override("separation", 8)
 
-	var office := RichTextLabel.new()
-	office.bbcode_enabled = true
-	office.fit_content = true
-	office.text = "[b]Office View[/b]\n\nA dead-quiet floor, one glowing monitor, and too many clues left by people who went home confident this would be fine.\n\nPick up artifacts before touching production."
-	box.add_child(office)
-
-	var office_view = OFFICE_VIEW.new()
-	box.add_child(office_view)
+	var desk_note := RichTextLabel.new()
+	desk_note.bbcode_enabled = true
+	desk_note.fit_content = true
+	desk_note.text = "[b]Rifkin Software / Workstation 04[/b]\n\nJoel left the incident evidence here. Read it before touching production.\n\n[b]Desk notes[/b]"
+	box.add_child(desk_note)
 
 	var clue_heading := _section_label("Clues")
 	box.add_child(clue_heading)
@@ -143,6 +160,10 @@ func _build_workstation() -> Control:
 	editor.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	editor.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	editor.wrap_mode = TextEdit.LINE_WRAPPING_BOUNDARY
+	editor.text_changed.connect(func():
+		if is_visible_in_tree():
+			action_observed.emit("typing")
+	)
 	editor_box.add_child(editor)
 	var editor_actions := HBoxContainer.new()
 	var save_button := Button.new()
@@ -195,6 +216,10 @@ func _build_workstation() -> Control:
 	hint_button.pressed.connect(_next_hint)
 	helper_box.add_child(hint_button)
 	tabs.add_child(helper_box)
+	tabs.tab_changed.connect(func(index: int):
+		if is_visible_in_tree():
+			action_observed.emit(["case_file_viewed", "editor_opened", "terminal_opened", "helper_opened"][index])
+	)
 
 	return tabs
 
@@ -219,6 +244,7 @@ func _open_clue(clue: Dictionary) -> void:
 		discovered_clues[clue_id] = true
 		_update_score()
 	clue_detail.text = "[b]" + str(clue.get("title", "Clue")) + "[/b]\n\n" + str(clue.get("body", ""))
+	action_observed.emit("clue_read")
 
 
 func _render_case_file() -> void:
@@ -236,6 +262,7 @@ func _render_helper_intro() -> void:
 
 
 func _next_hint() -> void:
+	action_observed.emit("hint_requested")
 	var hints: Array = level.get("hints", [])
 	if hint_index >= hints.size():
 		helper_output.text += "\nNo more direct hints. Re-run the API simulation, compare it to the schema diff, and make the smallest code change that preserves old coupons."
@@ -274,14 +301,18 @@ func _remove_dir_recursive(path: String) -> void:
 
 func _load_editor_file() -> void:
 	var edit_path := sandbox_path.path_join(EDIT_FILE)
+	editor.set_block_signals(true)
 	editor.text = FileAccess.get_file_as_string(edit_path)
+	editor.set_block_signals(false)
 
 
-func _save_editor_file() -> void:
+func _save_editor_file(observe: bool = true) -> void:
 	var edit_path := sandbox_path.path_join(EDIT_FILE)
 	var out := FileAccess.open(edit_path, FileAccess.WRITE)
 	if out:
 		out.store_string(editor.text)
+		if observe:
+			action_observed.emit("draft_saved")
 	_append_terminal("Saved " + EDIT_FILE + "\n")
 
 
@@ -289,10 +320,11 @@ func _reset_sandbox() -> void:
 	_ensure_sandbox(true)
 	_load_editor_file()
 	_append_terminal("Sandbox reset to the incident snapshot.\n")
+	action_observed.emit("sandbox_reset")
 
 
 func _run_runner(command: String) -> void:
-	_save_editor_file()
+	_save_editor_file(false)
 	if command == "test":
 		tests_run += 1
 	var runner_path := ProjectSettings.globalize_path("res://tools/level_runner.mjs")
@@ -308,6 +340,13 @@ func _run_runner(command: String) -> void:
 			status_label.text = "Deploy accepted. Checkout restored."
 		else:
 			status_label.text = "Deploy rejected. Evidence still disagrees."
+		action_observed.emit("deploy_accepted" if exit_code == 0 else "deploy_rejected")
+	elif command == "test":
+		action_observed.emit("tests_passed" if exit_code == 0 else "tests_failed")
+	elif command == "simulate":
+		action_observed.emit("simulate")
+	elif command == "status":
+		action_observed.emit("status_checked")
 	_update_score()
 
 

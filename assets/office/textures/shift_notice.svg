@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="1100" viewBox="0 0 800 1100">
+  <title>Rifkin Software extended shift coverage notice</title>
+  <desc>An editable hostile workplace policy posted beside the retention-net notice.</desc>
+  <rect width="800" height="1100" fill="#d4d0bd"/>
+  <g font-family="Segoe UI, sans-serif" fill="#3a4238">
+    <text x="65" y="95" font-size="28" letter-spacing="2">RIFKIN SOFTWARE</text>
+    <path d="M65 135 H735" stroke="#788071" stroke-width="2"/>
+    <text x="65" y="230" font-size="43" font-weight="600">EXTENDED SHIFT</text>
+    <text x="65" y="290" font-size="43" font-weight="600">COVERAGE</text>
+    <text x="65" y="415" font-size="68">07:00 — 23:00</text>
+    <text x="65" y="480" font-size="24" letter-spacing="3">MINIMUM CORE ATTENDANCE</text>
+    <g font-size="29">
+      <text x="65" y="585">Leaving before release counts</text>
+      <text x="65" y="632">as unscheduled absence.</text>
+      <text x="65" y="727">Meals should be taken at your</text>
+      <text x="65" y="774">assigned terminal.</text>
+      <text x="65" y="869">Presence is confirmed</text>
+      <text x="65" y="916">automatically by Panopticon.</text>
+    </g>
+    <path d="M65 982 H735" stroke="#788071" stroke-width="2"/>
+    <text x="65" y="1040" font-size="24">OPERATIONS / FLOOR 04</text>
+  </g>
+</svg>
