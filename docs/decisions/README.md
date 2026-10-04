@@ -22,14 +22,20 @@ ADRs record HOW/WHY. Statuses are historical; index/specification shows effectiv
 | [0016](0016-story-first-scope-and-deferred-retirement-scoring.md) | Accepted | Authored story first; retirement scoring deferred |
 | [0017](0017-first-level-operative-building-expansion.md) | Accepted next-session scope | Traversable first-level spaces; refusal descent: 0018 |
 | [0018](0018-refusal-descent-and-guard-dog-alternatives.md) | Accepted direction; puzzle mechanism proposed | Refusal descent; dogs/snack; caught retry: 0020 |
-| [0019](0019-quake-style-movement-and-impossible-practice-space.md) | Accepted direction; later courses | Strafe-jump acceleration; impossible movement-practice space |
+| [0019](0019-quake-style-movement-and-impossible-practice-space.md) | Accepted direction; later courses | Strafe-jump acceleration; controller contract: 0022; impossible movement-practice space |
 | [0020](0020-local-guard-dog-retry-and-snack-restoration.md) | Accepted | Corridor-entrance retry; used snack restored |
 | [0021](0021-bounded-elevator-transfer-and-first-level-layout.md) | Implementation choice; validation pending at recording | D-15 spatial layout; paired cabs with one 6 m descent/return |
+| [0022](0022-approved-strafe-jump-controller-contract.md) | User-approved contract; implementation and verification pending at recording | D-17 controller constants, held-Space landing behavior, modal input clearing, break-room lesson and walking speed HUD; press-latch timing: 0023 |
+| [0023](0023-timed-landing-jump-buffer.md) | User-approved timing change; implementation and verification pending at recording | 120 ms prelanding Space request; release retains it, eligible ground consumes it before friction, expiry/reset clears it |
+| [0024](0024-shared-stage-exits-and-movement-progression.md) | Accepted direction; later research and delivery | Level-one corridor shared after repair/refusal; later stage exits increase movement challenge; cognitive benefit is a hypothesis |
 
 0004: escape needs no opposite-route records; optional all-evidence investigation remains unresolved.
 0013 clarifies early escape as permission to go home, not resignation or permanent campaign exit.
 0015 adds post-shift resignation without redefining either escape route.
 0018 settles refusal-path descent; button order remains proposed. 0020 settles caught recovery; timer and other reset details remain open.
 0021 records the agent's bounded layout/travel choice within the authorized continuation; the final puzzle and release gates remain separate. Subsequent passing integration checks, rendered review, and the user's successful manual input review are recorded in [session continuity](../../SESSION_CONTINUITY.md).
+0022 settles controller slice 0.5 under 0019 without changing 0021's elevator transfer. Later secret-room, pad/course, reset, reward, and clock choices remain D-17 work; controller approval is not implementation or verification. Subsequent implementation, passing controller/route checks, and pending human playtest are recorded in the living specification and [session continuity](../../SESSION_CONTINUITY.md).
+0023 replaces only the next-tick press latch used to implement 0022 with an approved 120 ms prelanding buffer after the user's movement feedback. Its implementation and passing focused, rendered controller/route, and headless regression checks are recorded in the [living specification](../PRS-legacy-incident-escape-room.md). Held-Space repetition, movement constants, and 60 Hz physics remain effective; improved responsiveness and retained challenge still require manual retest.
+0024 adds G-21 shared stage-exit progression: the existing corridor belongs only to level one, both repair/refusal reach it, and later exits increase movement challenge. Research follows the user's controller comparison; D-03/D-17 retain concrete choices. Optional G-20 courses remain separate, and cognitive/learning benefit is unproven.
 
 Recorded ADRs are immutable: never edit/renumber/delete. Corrections/status changes require numbered successors referencing predecessors; update index/specification. Label proposals; cite authorization.

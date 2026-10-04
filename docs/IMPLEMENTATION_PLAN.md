@@ -1,6 +1,6 @@
 # Legacy Incident Escape Room Implementation Plan
 
-Last updated: 2026-10-04. Status: G-18 spatial slices implemented, with collision checks, rendered route review, and the user's manual round trip passed. Reported elevator doorway texture fighting was corrected and verified in the rebuilt asset. Movement and encounter requirements retain separate slices and design gates.
+Last updated: 2026-10-04. Status: G-18 spatial slices and G-19 controller slice 0.5 implemented. Spatial/manual baseline and new automated controller/ordinary/skilled route checks pass. Human review of the new movement remains pending; encounter and later-course gates remain separate.
 
 **Goal:** deliver one playable work shift connecting real debugging, surveillance resistance, evidence recording, and two ways to get home for the night, then a scoped construction exercise for basic coders. Establish a limited next-day handoff. Investigate optional real-app practice now; keep its delivery and the later campaign finale separate from the core skeleton.
 
@@ -8,7 +8,7 @@ Last updated: 2026-10-04. Status: G-18 spatial slices implemented, with collisio
 
 **Stack:** Godot 4.7 standard, GDScript, local Node/JavaScript ES modules and `node:test`, existing Python/Blender asset tooling.
 
-**Current spatial work:** slices 0.2–0.4 implement the bounded D-15 layout recorded in [ADR-0021](decisions/0021-bounded-elevator-transfer-and-first-level-layout.md): staff passage to the break room/lobby, one 6 m elevator descent/return, and a 52 m lower corridor to the exit. Building, gameplay, surveillance, and rendered round-trip checks pass; the user also completed the manual mouse/keyboard round trip and confirmed it worked. Elevator doorway texture fighting reported in that playtest was corrected through floor and sidewall joins. The rebuilt asset has zero measured overlap at both entrances, four targeted rendered views were reviewed, and all three integration checks passed again. Next settle the separate D-17 controller contract for slice 0.5 before dog-evasion tuning. Elevator puzzles and dogs remain 3.2 sub-slices; the secret movement room is later content. Pirates-style retirement scoring is deferred.
+**Current spatial/controller work:** slices 0.2–0.4 implement the bounded D-15 layout recorded in [ADR-0021](decisions/0021-bounded-elevator-transfer-and-first-level-layout.md): staff passage to the break room/lobby, one 6 m elevator descent/return, and a 52 m lower corridor to the exit. The user passed the spatial manual round trip; the subsequent elevator surface correction passed measured and rendered review. Slice 0.5 now implements the approved D-17 contract in [ADR-0022](decisions/0022-approved-strafe-jump-controller-contract.md), with real-input controller checks, ordinary/skilled round trips, and all three existing headless checks passed. Forward+ lesson/cab-join captures were reviewed. Next complete the human movement/joins playtest before dog-evasion tuning. Elevator puzzles and dogs remain 3.2 sub-slices; the secret movement room is later content. Pirates-style retirement scoring is deferred.
 
 Sources: [PRD](PRD-legacy-incident-escape-room.md), [product specification](PRS-legacy-incident-escape-room.md), [ADRs](decisions/README.md), and [AGENTS.md](../AGENTS.md).
 
@@ -18,6 +18,7 @@ Sources: [PRD](PRD-legacy-incident-escape-room.md), [product specification](PRS-
 - Retain the existing stack. Approve dependencies or architectural expansion before introducing them.
 - Leave the shipped incident intentionally broken. Solved-state checks use isolated copies.
 - Both repair and refusal can escape. Each supplies distinct puzzle clues and crime evidence.
+- G-21/ADR-0024: both routes reach the shared stage exit. The existing corridor is exclusive to level one; later exits increase movement challenge. D-03/D-17 settle concrete mechanics and alternatives after the user's controller comparison; cognitive/learning benefit from varying activities remains a hypothesis.
 - Dystopian absurdism governs the story. Ordinary escape means going home tonight, with another shift the next workday; refusal of the assignment does not automatically resign.
 - After every completed shift/stage, both routes offer quitting or continuing employment. Several endings are required. Indubitably career pressure helps explain choosing return; controls, interactivity, and resignation outcomes remain D-13/D-14 choices.
 - Preserve the candidate ending: evidence including murder prompts authorities to close Rifkin; the celebrated player then faces lost income and rejection by similarly abusive employers. Finale conditions remain D-14; do not make nightly exit depend on that ending.
@@ -101,11 +102,18 @@ These spatial slices establish the operative building only. The NDA, messenger, 
 
 **Player outcome:** walk normally, jump, and use coordinated strafing and mouse direction to gain and carry speed under a consistent movement contract.
 
-**Gate:** D-17 reviewed physics/tuning, jump input/timing, stopping, and controls teaching. This is the next behavior slice after the completed spatial work; the [continuation prompt](CONTINUATION_PROMPT.md) begins with its contract review. **Likely files:** `godot/scripts/office_player.gd`, relevant player/scene settings, and focused integration checks. No movement dependency or wholesale controller framework is approved.
+**D-17 choice:** the user approved the controller/teaching contract in [ADR-0022](decisions/0022-approved-strafe-jump-controller-contract.md). `office_player.gd` implements separate ground/air acceleration and held-Space landing hops at the unchanged 60 Hz step; `office_room.gd` supplies the break-room lesson, speed HUD, and mouse-release reset. The user's playtest reached 8 m/s but found rhythmic taps too difficult with the next-tick press latch. [ADR-0023](decisions/0023-timed-landing-jump-buffer.md)'s approved 120 ms prelanding request is implemented and passes focused controller/route and regression checks; manual rhythmic-tap retest is pending. Improved responsiveness while retaining challenge is a hypothesis to review in play. Capsule, scenes, physics rate, building geometry, and dependencies remain unchanged; later course rules remain open.
 
-- [ ] Red: tests distinguish ordinary movement from the approved accelerating strafe-jump sequence and verify required landing/stopping behavior. Test the accepted fixed-step/input contract; do not add matrices for every possible display rate.
-- [ ] Green: implement the smallest ground/air velocity and jump changes for that contract. Keep mouse capture, workstation transitions, and ordinary navigation working.
-- [ ] Verify: teach controls in a safe short space, play the route at ordinary and skilled speeds, and check collision clearance and stopping at interactables. Tune dog evasion only after this behavior is validated.
+- [x] Red: observed focused failures for the changed ground acceleration, missing jumps/air momentum, cap enforcement, and held-jump transition resets. `movement_integration.gd` drives real key/mouse events and the active controller at 60 Hz; no display-rate matrix or test-only controller was added.
+- [x] Green: implement the approved ground friction/acceleration, projection-limited air acceleration, 8 m/s cap, Space press/hold behavior, and jump-state clearing through existing walking pauses. Preserve workstation/notice/elevator returns and ordinary navigation.
+- [x] Automated/rendered verification: the focused controller checks and input-driven ordinary/skilled complete round trips pass, including stopping at controls, header/cab/exit collision, and workstation return. Existing building/gameplay/surveillance checks pass with isolated saves. The break-room lesson and speed HUD received rendered review.
+- [x] Buffer red/green: observed focused failures for the released-tap landing hop and momentum, then passed after replacing the next-tick latch with a 0.12-second countdown using physics delta. Fresh non-repeat presses refresh it, the first eligible grounded step consumes it once before friction, and expiry/existing walking resets clear it. Held hops and the approved movement constants remain; no airborne jump or late-ledge grace was added.
+- [x] Buffer verification: the full rendered movement integration passed with zero failures, including expiry/no airborne jump, single consumption, modal clearing/fresh resume, ground/air behavior, the 8 m/s cap, and ordinary/skilled complete round trips. Headless building/gameplay/surveillance integrations each passed with zero failures and isolated saves.
+- [ ] Human retest: review rhythmic taps within the landing window, steering, held jumps, stopping, mouse capture, the complete route, lesson, and elevator surface joins using the isolated interactive command below. Assess responsiveness and retained challenge before dog-evasion tuning or advancing beyond this controller slice.
+
+Current handoff: stop development for the user's Quake 3/Quake Live comparison. Await those findings before exit-challenge research or further movement tuning; the accepted G-21 direction is documentation only for now.
+
+Process improvement tried here: test the active controller through real input at its normal step, alongside collision and rendered-join checks. The old building test's manually supplied velocity could not expose missing air momentum or held-jump leakage; the new checks did. Keep this distinction for encounter tuning.
 
 ## Phase 1 — Introduce coercion and teach evidence ownership
 
@@ -196,19 +204,19 @@ These spatial slices establish the operative building only. The NDA, messenger, 
 
 ## Phase 3 — Complete both evidence-bearing escape routes
 
-### Slice 3.1: Repair opens an escape opportunity — G-01, G-04, G-09
+### Slice 3.1: Repair opens an escape opportunity — G-01, G-04, G-09, G-21
 
-**Player outcome:** complete the real incident, use the posted verification exception, obtain that route's puzzle clue and crime evidence, and depart home for the night.
+**Player outcome:** complete the real incident, use the posted verification exception, obtain that route's puzzle clue and crime evidence, and access the shared level-one corridor/exit to complete the stage and depart home for the night.
 
 **Gate:** D-03 approved route procedures and fictional records. **Depends on:** phases 1 and 2. **Likely files:** `godot/scripts/main.gd`, `godot/scripts/office_room.gd`, `godot/levels/night_shift_checkout/level.json`, `godot/tests/gameplay_integration.gd`. Add scenario content in the existing level directory pattern only if a distinct incident is approved.
 
 - [ ] Red: the untouched incident rejects deployment; a solved disposable copy passes tests and replay; acceptance alone does not mark escape; the physical procedure ends this shift without automatically resigning or ending the campaign.
 - [ ] Green: connect validated repair to the approved access opportunity, route-specific records, and physical exit outcome.
-- [ ] Verify: follow this route without any refusal-only clue. Confirm notes preserve the source of its crime evidence and the original puzzle source remains broken.
+- [ ] Verify: follow this route to the shared level-one corridor/exit without any refusal-only clue. Confirm notes preserve the source of its crime evidence and the original puzzle source remains broken.
 
-### Slice 3.2: Refuse the assignment and escape — G-01, G-02, G-03, G-04, G-09, G-10
+### Slice 3.2: Refuse the assignment and escape — G-01, G-02, G-03, G-04, G-09, G-10, G-21
 
-**Player outcome:** use surveillance cover and the reviewed elevator puzzle to descend, pass guard dogs through movement or the reserved snack, and get home with the incident unresolved. Collect distinct puzzle clues and subtle physical crime evidence.
+**Player outcome:** use surveillance cover and the reviewed elevator puzzle to descend, pass guard dogs through movement or the reserved snack, and complete the stage through the shared level-one corridor/exit with the incident unresolved. Collect distinct puzzle clues and subtle physical crime evidence.
 
 **Gates:** D-03 route procedure, D-07 records, D-16 elevator/dog/snack contract, and D-17 movement tuning. **Depends on:** spatial slices, 0.5 before skill-evasion tuning, 3.1's physical exit behavior, the approved bypass, and agreements from 1.0. **Likely files:** `godot/scripts/office_room.gd`, `godot/scripts/panopticon.gd`, existing level content, and relevant integration tests. Deliver the following manageable sub-slices before the complete route.
 
@@ -342,6 +350,12 @@ Research is complete; placement here is a delivery proposal. Define the core bas
 - [ ] Green: implement that one reviewed workflow and its controls. Use a defined runtime and built-in libraries first; broader package installation is a later decision.
 - [ ] Verify: adapt one requirement and observe the player's explanation of responsibility choices. Record startup time, disk/memory use, setup friction, and actual isolation/lifecycle results before deciding distribution or expanding scope.
 
+## Later shared stage exits — G-21
+
+The existing corridor belongs only to level one and is available after either repair or refusal. Under [ADR-0024](decisions/0024-shared-stage-exits-and-movement-progression.md), each subsequent level's exit increases movement challenge while preserving independent viable routes and refusal without code repair. This is distinct from the optional G-20 room.
+
+After the user returns with controller comparison findings, research suitable challenges and difficulty spikes matched to the movement requirements. Then resolve D-03/D-17's exact mechanics, technique demands, teaching, difficulty, accessible alternatives, feedback/retry/clock before one later exit slice. No research or implementation is authorized for this handoff. Varying coding/reasoning with a different activity is the user's Pomodoro-inspired rationale; cognitive/learning benefits remain hypotheses to evaluate.
+
 ## Later movement playground — G-19, G-20
 
 After the controller is validated, review D-17's optional secret-room access, jump-pad/course rules, resets, teaching, and clock/reward policy. Deliver one enter → learn → attempt → retry → leave course before adding ascending difficulties. Oversized authored geometry is a sufficient first expression of impossible interior space; no portal/rendering framework is required. Keep this distinct from real-app practice and required refusal clues. This is later content, outside controller slice 0.5.
@@ -360,9 +374,10 @@ From the repository root, with the project's Godot executable available:
 godot --headless --path godot --script res://tests/building_integration.gd
 godot --headless --path godot --script res://tests/gameplay_integration.gd
 godot --headless --path godot --script res://tests/surveillance_integration.gd
+godot --path godot --script res://tests/movement_integration.gd
 ```
 
-Expected: exit code 0 and each script's `PASS` summary. Use the existing [setup instructions](GODOT_SETUP.md) if the alias is unavailable. Their isolated user directories must remain separate from the player's sandbox.
+Expected: exit code 0 and each script's `PASS` summary. Use the existing [setup instructions](GODOT_SETUP.md) if the alias is unavailable. Their isolated user directories must remain separate from the player's sandbox. Movement checks require a rendered driver because headless Godot cannot capture the mouse; they use `RifkinMovementTests`, the active controller, and the unchanged 60 Hz step. Add `-- --manual-playtest` to that command to open a fresh interactive run in the same isolated test directory.
 
 In `godot/levels/night_shift_checkout/incident_repo`:
 
@@ -373,4 +388,4 @@ npm run simulate
 
 Expected for the shipped start: nonzero exit for the migrated discount mismatch. Expected after a correct fix in a disposable copy: both pass and runner deployment accepts. Do not patch the source fixture to make ordinary repository checks appear green.
 
-For documentation changes, inspect links, decision status, capability coverage, and diff scope. For art or scene changes, inspect the affected view in the game. Building, gameplay, and surveillance checks passed on 2026-10-04, including a fresh run before publishing the spatial implementation. The user passed the manual round trip; the subsequent elevator surface correction received targeted rendered review. New controller behavior still requires its own checks and playtest.
+For documentation changes, inspect links, decision status, capability coverage, and diff scope. For art or scene changes, inspect the affected view in the game. Building, gameplay, surveillance, and rendered movement checks passed on 2026-10-04. The user passed the earlier spatial manual round trip; the subsequent elevator surface correction received targeted rendered review. A human playtest of the new controller remains pending.

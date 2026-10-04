@@ -10,6 +10,8 @@ var terminal: Area3D
 var hud: Control
 var prompt: Label
 var clock_label: Label
+var speed_label: Label
+var movement_lesson: Label
 var crosshair: Label
 var monitor_screen: MeshInstance3D
 var walking_camera: Transform3D
@@ -248,10 +250,20 @@ func _build_hud() -> void:
 	clock_label.position = Vector2(24, 47)
 	hud.add_child(clock_label)
 	var controls := Label.new()
-	controls.text = "WASD  Move     Mouse  Look     E  Interact     Esc  Release mouse"
+	controls.text = "WASD  Move     Mouse  Look     Space  Jump / hold to repeat     E  Interact     Esc  Release mouse"
 	controls.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_LEFT)
 	controls.position = Vector2(24, -48)
 	hud.add_child(controls)
+	speed_label = Label.new()
+	speed_label.name = "MovementSpeed"
+	speed_label.position = Vector2(24, 72)
+	hud.add_child(speed_label)
+	movement_lesson = Label.new()
+	movement_lesson.name = "MovementLesson"
+	movement_lesson.text = "Try a jump in the open floor space. Hold Space to chain hops.\nHold W + A and turn gently left, or W + D and turn right, to build speed.\nRelease Space and movement, then land to stop. Watch your speed above."
+	movement_lesson.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_LEFT)
+	movement_lesson.position = Vector2(24, -124)
+	hud.add_child(movement_lesson)
 	prompt = Label.new()
 	prompt.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	prompt.set_anchors_and_offsets_preset(Control.PRESET_CENTER)
@@ -271,6 +283,9 @@ func _physics_process(delta: float) -> void:
 	if workstation_active or elevator_travelling or (notice_panel != null and notice_panel.visible):
 		return
 	var captured := Input.mouse_mode == Input.MOUSE_MODE_CAPTURED
+	speed_label.text = "Speed  %.1f m/s" % Vector2(player.velocity.x, player.velocity.z).length()
+	var position := player.global_position
+	movement_lesson.visible = captured and position.y > -0.1 and position.x > -2.7 and position.x < 3.3 and position.z < -7.2 and position.z > -13.0
 	crosshair.visible = captured
 	prompt.text = ""
 	if not captured:
@@ -302,17 +317,20 @@ func _unhandled_input(event: InputEvent) -> void:
 		return
 	if event is InputEventKey and event.pressed and not event.echo:
 		if event.keycode == KEY_ESCAPE:
+			player.active = false
 			Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 			get_viewport().set_input_as_handled()
 		elif event.keycode == KEY_E and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
 			interact()
 			get_viewport().set_input_as_handled()
 	elif event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
+		player.active = true
 		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 		get_viewport().set_input_as_handled()
 
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_APPLICATION_FOCUS_OUT:
+		player.active = false
 		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 
 func _target_is_terminal() -> bool:
