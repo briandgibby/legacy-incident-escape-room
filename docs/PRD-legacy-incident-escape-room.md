@@ -1,6 +1,6 @@
 # Legacy Incident Escape Room — Product Requirements Document
 
-> Status: Draft requirements. Created: 2026-10-03. Updated: 2026-10-04. This session prepares documentation for publication; the next session builds the first-level spatial baseline. The specification distinguishes current behavior from future mechanics.
+> Status: Draft requirements. Created: 2026-10-03. Updated: 2026-10-04. The next implementation session builds the first-level spatial baseline; this discussion records design only. The specification distinguishes current behavior from future mechanics.
 
 ## 1. Purpose & vision
 
@@ -14,7 +14,9 @@ Several endings are required. Quitting is a genuine player option after each com
 
 Focus current delivery on the established story and its authored choices. The Pirates-style retirement/accomplishment model is deferred under [ADR 0016](decisions/0016-story-first-scope-and-deferred-retirement-scoring.md). It could be reconsidered if a successful game later supports a puzzle-pack product; that is a conditional idea, not a current roadmap commitment. Multiple endings and the option to quit after each stage remain required.
 
-The next implementation session establishes the operative first-level building: a connected break room, elevator area, and long corridor to the exit. These spaces give physical exploration and future escape puzzles a usable setting, without requiring the entire building to be modeled. [ADR 0017](decisions/0017-first-level-operative-building-expansion.md) records this scope. Layout and elevator function still need a bounded choice before construction.
+The next implementation session establishes the operative first-level building: a connected break room, elevator area, and long corridor to the exit. These spaces give physical exploration and future escape puzzles a usable setting, without requiring the entire building to be modeled. [ADR 0017](decisions/0017-first-level-operative-building-expansion.md) records this scope. The elevator now leads down toward the refusal route's exit corridor. A puzzle allows unauthorized descent; a button-order code is a promising option rather than a finalized solution. Guard dogs discourage escape, with the reserved break-room snack providing an alternative when movement evasion is too difficult. [ADR 0018](decisions/0018-refusal-descent-and-guard-dog-alternatives.md) records the direction. If caught, the player returns to the corridor entrance with the snack restored if used, under [ADR 0020](decisions/0020-local-guard-dog-retry-and-snack-restoration.md). Exact clues, encounter timing, and other retry details remain open.
+
+Movement should feel similar to Quake 3 Arena, with strafe jumping available to build speed. Later, a secret office room offers jump pads and progressively harder movement courses inspired by defrag maps. Its enormous interior contradicts the building's narrow footprint: Rifkin's architecture is deliberately strange. This movement playground follows [ADR 0019](decisions/0019-quake-style-movement-and-impossible-practice-space.md). It is separate from real-app practice and does not make advanced movement a prerequisite for refusal.
 
 Memorable, jarring moments are a hypothesis for attention and learning, not proven research or a gore mandate. Players and developers should improve through observation, experiments, evidence, and reflection.
 
@@ -55,6 +57,7 @@ The developer uses player observations and technical checks to revise this exist
 - Nightly release and Indubitably's career pressure make continued employment part of the dystopian absurdism: G-16.
 - Several endings give employment and investigation choices consequences, including the candidate exposure ending's economically bleak aftermath: G-17.
 - A connected first-level building gives exploration and escape a physical setting: G-18.
+- Learnable momentum and an optional surreal movement playground make physical skill another source of mastery: G-19, G-20.
 
 ## 4. Capability catalog
 
@@ -77,7 +80,9 @@ The developer uses player observations and technical checks to revise this exist
 | G-15 | Investigate optional practice outside story mode: player-created environments that run functional player-built applications using the game's documentation and guidance. App types, environment technology, assistance, and delivery remain undecided; this is a research direction. |
 | G-16 | Escape ordinary shifts to go home for the night, then choose quitting or continuing into the next workday after every completed stage, on either route. Encounter Indubitably career-pressure story elements explaining fear of quitting's black mark. Controls, consequences, app interactivity, and cross-shift retention remain open. |
 | G-17 | Provide several endings. Preserve the candidate in which smoking-gun wrongdoing/murder evidence leads authorities to close Rifkin, followed by unemployment and employer rejection of the publicly celebrated player. Ending conditions, resignation aftermath, evidence effects, and post-quit reporting remain undecided. |
-| G-18 | Explore connected operative spaces in the first level: the existing office, a break room, an elevator area, and a long corridor leading to the exit. Build only the parts needed for play. Exact layout and elevator behavior remain open; reaching the physical exit does not yet define shift completion. |
+| G-18 | Explore the existing office, break room, descending elevator, and long corridor to the exit. Refusal uses an elevator puzzle and faces guard dogs, with the reserved break-room snack as an alternative to movement evasion. If caught, return to the corridor entrance and restore the snack if used. Exact puzzle, snack, dog, and remaining retry rules are open. Spatial arrival alone does not define shift completion. |
+| G-19 | Move in a manner similar to Quake 3 Arena, using strafe jumping for acceleration. Define a learnable, consistent movement contract and usable ordinary controls. Exact physics and tuning remain undecided; the current controller does not implement this. |
+| G-20 | Later discover a secret room with jump pads and multiple movement courses of ascending difficulty, inspired by defrag strafe-jumping maps. Deliberately oversized interiors imply impossible space within Rifkin's narrow exterior. This optional movement minigame is distinct from real-app practice; details remain open. |
 
 Each route must provide the essentials needed to complete it. Neither route requires the other route's unique clues. Distinct evidence must affect understanding, not merely reward collection. Complementary perspectives and replay value remain proposals.
 
@@ -93,14 +98,14 @@ ADR 0011 sets the initial audience and defers introductory lessons. G-15 follows
 
 G-16 follows ADRs 0013/0014/0015. Daily escape completes a shift; resignation is a separate available choice afterward. G-17 follows ADR 0015 for multiple endings and ADR 0014 for the candidate exposure conclusion. Neither route's nightly exit or access to quitting requires every crime record; final exposure conditions need a separate decision and cannot silently redefine those exits.
 
-G-18 follows ADR 0017. Spatial construction is the next implementation priority. It does not select the unresolved route procedures, surveillance bypasses, or ending gates.
+G-18 follows ADRs 0017/0018/0020. Spatial construction is the next implementation priority; concrete elevator, dog, snack, and release procedures still need design beyond accepted local recovery. G-19/G-20 follow ADR 0019. Preserve a viable reasoning route through the dogs, with skilled evasion as an alternative; the later movement room must not gate escape or required crime evidence.
 
 ## 5. Phased delivery
 
 The [implementation plan](IMPLEMENTATION_PLAN.md) defines vertical slices, conditional on resolving each phase's blocking choices.
 
 - **P0:** Establish documents and resolve design decisions needed for the first slice.
-- **Next: first-level spatial baseline:** extend the existing office with a usable break room, elevator area, and long corridor to the exit in manageable slices. Preserve the current incident and interactions while establishing space for later puzzles.
+- **Next: first-level spatial baseline:** extend the existing office with a usable break room, descending elevator area, and long corridor to the exit in manageable slices. Preserve the current incident and interactions while establishing space for later puzzles. Develop the Quake-style controller in its own reviewed slice before tuning movement-based dog evasion.
 - **P1:** Deliver agreement signing, the notebook/tutorial, mission-one messages, and one task-earned Dantalion refresh loop. Observe whether players can investigate with limited optional help.
 - **P2:** Connect surveillance observations to consequences and test a thumb-drive bypass loop. Retain the device only if the experiment supports it.
 - **P3:** Deliver one complete shift with real coding validation, repair and refusal routes, distinct puzzle and crime evidence, going home as a separate completion state, and the reviewed quit/continue choice afterward.
@@ -109,6 +114,7 @@ The [implementation plan](IMPLEMENTATION_PLAN.md) defines vertical slices, condi
 - **P5:** Playtest, reflect, and revise before expanding content.
 - **Practice research now; candidate P6 later:** investigate real app execution now. Decide whether to deliver one optional practice workflow after the core baseline, with runtime and integration choices reviewed separately. Introductory lessons also remain deferred until the baseline; their later order is unchosen.
 - **Later campaign direction:** outline successive shifts and multiple endings, including resignation outcomes and the candidate exposure ending; detailed later puzzles, evidence thresholds, and finale delivery remain outside the first-shift baseline.
+- **Later movement playground:** add the secret, impossibly large jump-pad room and progressively harder courses after the controller is validated; keep this separate from the first building expansion and optional real-app practice.
 
 ## 6. Success evidence
 
@@ -174,10 +180,11 @@ Unresolved choices remain here:
 - Which app type should practice first support, and what must its environment isolate? How do app persistence, preview, offline use, and practice guidance work without entangling story progression?
 - How is the accepted post-stage quitting choice presented, and what consequence follows? How interactive is Indubitably, and how are career restrictions communicated before any enforcement?
 - Which endings fulfill the accepted multiple-ending requirement, and can a player report retained evidence after quitting? What evidence/action leads to the candidate shutdown ending, and what carries across nights? How do the tutorial and first workday map to shift numbers?
-- How should the break room, elevator, and exit corridor connect to the existing office? What must the elevator do in the first playable layout?
+- Which elevator puzzle earns descent, and how are its rules, successful input, and mistakes communicated? Where can players learn the dog/snack interaction? After the accepted corridor-entrance retry/snack restoration, what clock and other reset rules apply, and what happens if the snack is wasted without being caught?
+- Which ground/air movement and jump rules capture the desired Quake feel while supporting readable controls? How should the later secret movement room teach and escalate these skills?
 
 Specific timing, physical routes, thresholds, and failure proposals remain unaccepted.
 
 ## 9. Out of scope
 
-This wrap-up session changes documentation and publishes it through Git; it does not implement gameplay, add dependencies, run the game, or change tests. The next session's building work is scoped in the [continuation prompt](CONTINUATION_PROMPT.md). The practice spike is research and read-only inspection; no runnable prototype was created. Initial delivery excludes multiplayer, cloud services, additional incident packs, and platform replacement. Practice delivery, general-purpose virtual machines, arbitrary package installation, and absolute beginner lessons are outside the approved core skeleton. Pirates-style retirement scoring and a puzzle-pack product are deferred. Indubitably uses fictional content; real job-platform connections and a general career simulator are not authorized. The proposed campaign ending does not expand the first-shift implementation scope. Educational effectiveness and thumb-drive mechanics remain unproven. Nightly escape does not require collecting every route's evidence.
+This discussion changes documentation; it does not implement gameplay, add dependencies, run the game, or change tests. The next session's building work is scoped in the [continuation prompt](CONTINUATION_PROMPT.md); movement, the elevator puzzle, dog/snack mechanics, and the later secret room have separate slices. The practice spike is research and read-only inspection; no runnable prototype was created. Initial delivery excludes multiplayer, cloud services, additional incident packs, and platform replacement. Practice delivery, general-purpose virtual machines, arbitrary package installation, and absolute beginner lessons are outside the approved core skeleton. Pirates-style retirement scoring and a puzzle-pack product are deferred. Indubitably uses fictional content; real job-platform connections and a general career simulator are not authorized. The proposed campaign ending does not expand the first-shift implementation scope. Educational effectiveness and thumb-drive mechanics remain unproven. Nightly escape does not require collecting every route's evidence.

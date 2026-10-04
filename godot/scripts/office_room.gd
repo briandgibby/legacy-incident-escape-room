@@ -19,6 +19,11 @@ var notice_area: Area3D
 var notice_panel: PanelContainer
 var window_glass: MeshInstance3D
 var service_door: Node3D
+var door_area: Area3D
+var service_door_open := false
+var elevator_controls: Array[Area3D] = []
+var elevator_travelling := false
+var travel_fade: ColorRect
 var inside_cubicle := true
 var nearby_terminals: Dictionary = {}
 var look_seconds := {"window_looked": 0.0, "door_looked": 0.0}
@@ -55,13 +60,15 @@ func _ready() -> void:
 	_add_notice()
 	window_glass = office.find_child("Window safety glass", true, false) as MeshInstance3D
 	service_door = office.find_child("Service door leaf", true, false) as Node3D
+	_add_building_interactions()
 	workstation.clip_contents = true
 	get_viewport().size_changed.connect(_resize_terminal_view)
 
 func _add_world_collisions() -> void:
 	for mesh in office.find_children("*", "MeshInstance3D", true, false):
 		var object_name := String(mesh.name)
-		if not (object_name == "Floor" or object_name.begins_with("Wall ") or object_name == "Ceiling backing"
+		if not (object_name == "Floor" or object_name.begins_with("Floor ") or object_name.begins_with("Wall ")
+			or object_name == "Ceiling backing" or object_name.begins_with("Ceiling backing ") or object_name.begins_with("Building solid ")
 			or "fabric partition" in object_name or "desk top" in object_name or "modesty panel" in object_name
 			or "drawer pedestal" in object_name or "computer tower" in object_name
 			or "chair seat" in object_name or "chair back" in object_name or "chair armrest" in object_name
@@ -78,6 +85,69 @@ func _add_world_collisions() -> void:
 		collision.position = bounds.get_center()
 		body.add_child(collision)
 		mesh.add_child(body)
+
+func _add_building_interactions() -> void:
+	door_area = Area3D.new()
+	door_area.name = "StaffDoor"
+	door_area.collision_layer = 2
+	door_area.collision_mask = 0
+	var door_collision := CollisionShape3D.new()
+	var door_shape := BoxShape3D.new()
+	var leaf := service_door as MeshInstance3D
+	door_shape.size = leaf.get_aabb().size + Vector3(0.02, 0.02, 0.02)
+	door_collision.shape = door_shape
+	door_collision.position = leaf.get_aabb().get_center()
+	door_area.add_child(door_collision)
+	service_door.add_child(door_area)
+	for landing in ["upper", "lower"]:
+		var panel := office.find_child("Elevator " + landing + " control", true, false) as MeshInstance3D
+		var control := Area3D.new()
+		control.name = "ElevatorControl"
+		control.collision_layer = 2
+		control.collision_mask = 0
+		var collision := CollisionShape3D.new()
+		var shape := BoxShape3D.new()
+		shape.size = panel.get_aabb().size + Vector3(0.02, 0.02, 0.02)
+		collision.shape = shape
+		collision.position = panel.get_aabb().get_center()
+		control.add_child(collision)
+		panel.add_child(control)
+		elevator_controls.append(control)
+	travel_fade = ColorRect.new()
+	travel_fade.name = "ElevatorTravel"
+	travel_fade.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	travel_fade.color = Color(0, 0, 0, 0)
+	travel_fade.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	$CanvasLayer.add_child(travel_fade)
+	travel_fade.hide()
+
+func _open_service_door() -> void:
+	service_door_open = true
+	door_area.collision_layer = 0
+	var door := service_door.get_parent() as Node3D
+	create_tween().tween_property(door, "position:x", door.position.x - 1.16, 0.3)
+
+func _use_elevator(control: Object) -> void:
+	var descending := control == elevator_controls[0]
+	var departure := office.find_child("ElevatorUpperArrival" if descending else "ElevatorLowerArrival", true, false) as Node3D
+	var arrival := office.find_child("ElevatorLowerArrival" if descending else "ElevatorUpperArrival", true, false) as Node3D
+	elevator_travelling = true
+	player.active = false
+	player.velocity = Vector3.ZERO
+	travel_fade.show()
+	var travel := create_tween()
+	travel.tween_property(travel_fade, "color:a", 1.0, 0.3)
+	travel.tween_interval(0.4)
+	travel.tween_callback(func():
+		player.global_position += arrival.global_position - departure.global_position
+		player.velocity = Vector3.ZERO
+	)
+	travel.tween_property(travel_fade, "color:a", 0.0, 0.3)
+	travel.tween_callback(func():
+		travel_fade.hide()
+		elevator_travelling = false
+		player.active = true
+	)
 
 func _add_terminal() -> void:
 	var monitor := office.find_child("PlayerComputer", true, false).find_child("Player monitor housing", true, false) as MeshInstance3D
@@ -178,7 +248,7 @@ func _build_hud() -> void:
 	clock_label.position = Vector2(24, 47)
 	hud.add_child(clock_label)
 	var controls := Label.new()
-	controls.text = "WASD  Move     Mouse  Look     E  Use computer / Read notice     Esc  Release mouse"
+	controls.text = "WASD  Move     Mouse  Look     E  Interact     Esc  Release mouse"
 	controls.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_LEFT)
 	controls.position = Vector2(24, -48)
 	hud.add_child(controls)
@@ -198,7 +268,7 @@ func _build_hud() -> void:
 	hud.add_child(crosshair)
 
 func _physics_process(delta: float) -> void:
-	if workstation_active or (notice_panel != null and notice_panel.visible):
+	if workstation_active or elevator_travelling or (notice_panel != null and notice_panel.visible):
 		return
 	var captured := Input.mouse_mode == Input.MOUSE_MODE_CAPTURED
 	crosshair.visible = captured
@@ -209,6 +279,10 @@ func _physics_process(delta: float) -> void:
 		prompt.text = "[E] Use your computer"
 	elif _target_is_notice():
 		prompt.text = "[E] Read facilities notice"
+	elif not service_door_open and _interaction_target() == door_area:
+		prompt.text = "[E] Open staff door"
+	elif _interaction_target() is Area3D and _interaction_target() in elevator_controls:
+		prompt.text = "[E] Descend to exit corridor" if _interaction_target() == elevator_controls[0] else "[E] Return to office"
 	if captured and player.active and (zoom_tween == null or not zoom_tween.is_running()):
 		_observe_room(delta)
 	var remaining: int = workstation.remaining_seconds
@@ -224,7 +298,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		leave_workstation()
 		get_viewport().set_input_as_handled()
 		return
-	if workstation_active or (zoom_tween != null and zoom_tween.is_running()):
+	if workstation_active or elevator_travelling or (zoom_tween != null and zoom_tween.is_running()):
 		return
 	if event is InputEventKey and event.pressed and not event.echo:
 		if event.keycode == KEY_ESCAPE:
@@ -256,12 +330,16 @@ func _interaction_target() -> Object:
 	return hit.get("collider")
 
 func interact() -> void:
-	if workstation_active or (notice_panel != null and notice_panel.visible) or (zoom_tween != null and zoom_tween.is_running()):
+	if workstation_active or elevator_travelling or (notice_panel != null and notice_panel.visible) or (zoom_tween != null and zoom_tween.is_running()):
 		return
 	if _target_is_terminal():
 		enter_workstation()
 	elif _target_is_notice():
 		_open_notice()
+	elif not service_door_open and _interaction_target() == door_area:
+		_open_service_door()
+	elif _interaction_target() is Area3D and _interaction_target() in elevator_controls:
+		_use_elevator(_interaction_target())
 
 func _observe_room(delta: float) -> void:
 	var position_in_cubicle := player.global_position.x > -4.15 and player.global_position.x < -1.05 and player.global_position.z > 1.2 and player.global_position.z < 3.625

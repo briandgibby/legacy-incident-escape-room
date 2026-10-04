@@ -36,10 +36,10 @@ scene.unit_settings.scale_length = 1.0
 scene["company"] = "Rifkin Software"
 scene["unseen_supervisor"] = "Joel"
 scene["stage"] = "Night Shift Checkout / tutorial office"
-scene["asset_scope"] = "Player cubicle and surrounding static office; no gameplay wiring"
+scene["asset_scope"] = "Office, break room, two elevator landings and exit corridor; gameplay wired in Godot"
 
 collections = {}
-for name in ("00_Room", "01_PlayerCubicle", "02_EmptyWorkstations", "03_OfficeDetails", "04_Lighting", "05_Cameras", "06_GodotLights", "07_Exterior"):
+for name in ("00_Room", "01_PlayerCubicle", "02_EmptyWorkstations", "03_OfficeDetails", "04_Lighting", "05_Cameras", "06_GodotLights", "07_Exterior", "08_Building"):
     collection = bpy.data.collections.new(name)
     scene.collection.children.link(collection)
     collections[name] = collection
@@ -251,12 +251,15 @@ box("Wall east south of window", (7.05, -3.4, 1.65), (0.14, 5.2, 3.3), paint)
 box("Wall east north of window", (7.05, 4.55, 1.65), (0.14, 4.9, 3.3), paint)
 box("Wall east beneath window", (7.05, 0.65, 0.4), (0.14, 2.9, 0.8), paint)
 box("Wall east above window", (7.05, 0.65, 3.1), (0.14, 2.9, 0.4), paint)
-box("Wall north", (0, 7.05, 1.65), (14.2, 0.14, 3.3), paint)
+box("Wall north west of staff door", (-1.27, 7.05, 1.65), (11.66, 0.14, 3.3), paint)
+box("Wall north east of staff door", (6.42, 7.05, 1.65), (1.36, 0.14, 3.3), paint)
+box("Wall north above staff door", (5.15, 7.05, 2.78), (1.18, 0.14, 1.04), paint)
 box("Wall south", (0, -6.05, 1.65), (14.2, 0.14, 3.3), paint)
 for x in (-6.98, 6.98):
     box("Perimeter skirting", (x, 0.5, 0.065), (0.028, 13, 0.13), trim)
-for y in (-5.98, 6.98):
-    box("Perimeter skirting", (0, y, 0.065), (14, 0.028, 0.13), trim)
+box("Perimeter skirting", (0, -5.98, 0.065), (14, 0.028, 0.13), trim)
+box("Perimeter skirting", (-1.22, 6.98, 0.065), (11.56, 0.028, 0.13), trim)
+box("Perimeter skirting", (6.37, 6.98, 0.065), (1.26, 0.028, 0.13), trim)
 box("Ceiling backing", (0, 0.5, 3.34), (14, 13, 0.10), ceiling)
 for x in range(-7, 7):
     for y in range(-6, 7):
@@ -370,10 +373,13 @@ for x, y, number in ((1.0, -2.2, 5), (-2.6, 1.15, 7), (1.0, 1.15, 8), (-2.6, 4.5
 
 current_collection = collections["03_OfficeDetails"]
 # Plain institutional door: Joel's presence stays offscreen.
-box("Service door frame", (5.15, 6.94, 1.13), (1.2, 0.11, 2.26), trim, 0.008)
-box("Service door leaf", (5.15, 6.865, 1.1), (1.06, 0.05, 2.16), keyboard_mat, 0.006)
-box("Service door lever", (5.57, 6.82, 1.03), (0.18, 0.038, 0.027), steel, 0.008)
-label("Door placard", "STAFF ONLY", (5.15, 6.824, 1.7), 0.065, black)
+for x in (4.575, 5.725):
+    box("Wall staff door jamb", (x, 6.94, 1.13), (0.08, 0.11, 2.26), trim, 0.008)
+box("Wall staff door lintel", (5.15, 6.94, 2.22), (1.2, 0.11, 0.08), trim, 0.008)
+staff_door = marker("ServiceDoor", (0, 0, 0), "staff_door", True)
+box("Service door leaf", (5.15, 6.865, 1.1), (1.06, 0.05, 2.16), keyboard_mat, 0.006, staff_door)
+box("Service door lever", (5.57, 6.82, 1.03), (0.18, 0.038, 0.027), steel, 0.008, staff_door)
+label("Door placard", "STAFF ONLY", (5.15, 6.824, 1.7), 0.065, black, parent=staff_door)
 sign_mat = texture_material("Rifkin corporate sign", "company_sign.png", 0.62)
 box("Corporate sign backing", (-2.2, 6.91, 2.40), (3.2, 0.045, 1.20), black, 0.016)
 surface("Rifkin Software wall sign", (-2.2, 6.881, 2.40), 3.15, 1.18, sign_mat, rotation=(math.pi / 2, 0, 0))
@@ -418,6 +424,88 @@ surface("Extended shift coverage notice", (6.865, -3.11, 1.79), 0.53, 0.729, shi
 for y in (-2.25, -3.11):
     box("Bulletin notice pin", (6.857, y, 2.185), (0.015, 0.018, 0.018), black, 0.003)
 label("Floor wayfinding", "OPERATIONS   /   04", (-6.945, -3.9, 1.6), 0.075, trim, rotation=(math.pi / 2, 0, math.pi / 2))
+
+# Staff circulation beyond the existing door. Blender Z becomes Godot Y.
+current_collection = collections["08_Building"]
+box("Floor break room", (0.3, 10.0, -0.09), (6, 6.1, 0.18), carpet)
+box("Floor upper lobby", (5.15, 10.0, -0.09), (3.7, 6.0, 0.18), carpet)
+box("Ceiling backing break room", (0.3, 10.0, 3.34), (6, 6.1, 0.10), ceiling)
+box("Ceiling backing upper lobby", (5.15, 10.0, 3.34), (3.7, 6.1, 0.10), ceiling)
+box("Wall break room west", (-2.77, 10.05, 1.65), (0.14, 5.9, 3.3), paint)
+box("Wall upper lobby east", (7.07, 10.05, 1.65), (0.14, 5.9, 3.3), paint)
+box("Wall break room north", (0.575, 13.07, 1.65), (6.55, 0.14, 3.3), paint)
+box("Wall break room entry south", (3.3, 7.95, 1.65), (0.14, 1.7, 3.3), paint)
+box("Wall break room entry north", (3.3, 11.725, 1.65), (0.14, 2.55, 3.3), paint)
+box("Wall break room entry header", (3.3, 9.625, 2.85), (0.14, 1.65, 0.9), paint)
+label("Break room sign", "BREAK ROOM", (3.39, 9.625, 2.66), 0.16, black, rotation=(math.pi / 2, 0, math.pi / 2))
+label("Break room courtesy", "THANK YOU FOR REMAINING AVAILABLE", (0.3, 12.989, 2.1), 0.105, trim)
+box("Building solid refreshment counter", (-0.9, 12.46, 0.45), (3.1, 0.78, 0.9), trim, 0.015)
+box("Building solid counter top", (-0.9, 12.46, 0.923), (3.2, 0.85, 0.046), laminate, 0.01)
+box("Building solid refrigerator", (2.25, 12.41, 0.95), (0.78, 0.95, 1.9), keyboard_mat, 0.025)
+box("Refrigerator door seam", (2.25, 11.924, 1.3), (0.75, 0.016, 0.012), trim)
+box("Refrigerator handle", (1.97, 11.9, 1.08), (0.04, 0.045, 0.3), steel, 0.006)
+box("Building solid break table top", (-0.9, 9.8, 0.77), (1.65, 1.05, 0.07), laminate, 0.015)
+for x in (-1.55, -0.25):
+    for y in (9.42, 10.18):
+        box("Building solid break table leg", (x, y, 0.36), (0.055, 0.055, 0.72), steel)
+for y in (8.85, 10.75):
+    box("Building solid break bench", (-0.9, y, 0.43), (1.7, 0.42, 0.10), chair_fabric, 0.015)
+    for x in (-1.55, -0.25):
+        box("Building solid bench support", (x, y, 0.19), (0.07, 0.36, 0.38), steel)
+cylinder("Break room kettle", (-1.6, 12.4, 1.11), 0.13, 0.32, steel, 24)
+box("Kettle handle", (-1.76, 12.4, 1.13), (0.06, 0.14, 0.2), black, 0.02)
+for x in (-0.8, -0.5):
+    cylinder("Break room mug", (x, 12.37, 1.0), 0.048, 0.11, ceramic, 24)
+
+# Two enclosed cab interiors provide one local descent/return, not a tower simulation.
+for floor_z, landing in ((0, "upper"), (-6, "lower")):
+    box(f"Floor elevator {landing}", (5.15, 14.43, floor_z - 0.09), (2.6, 2.86, 0.18), trim)
+    box(f"Ceiling backing elevator {landing}", (5.15, 14.43, floor_z + 3.04), (2.6, 2.86, 0.10), trim)
+    # Start behind the painted jambs so steel/paint faces do not share a plane.
+    for x in (3.78, 6.52):
+        box(f"Wall elevator {landing} side", (x, 14.50, floor_z + 1.5), (0.14, 2.72, 3), steel)
+    box(f"Wall elevator {landing} back", (5.15, 15.93, floor_z + 1.5), (2.88, 0.14, 3), steel)
+    for x in (4.15, 6.15):
+        box(f"Wall elevator {landing} front", (x, 13.07, floor_z + 1.5), (0.6, 0.14, 3), trim)
+    box(f"Wall elevator {landing} header", (5.15, 13.07, floor_z + 2.65), (1.4, 0.14, 0.7), trim)
+    box(f"Wall {landing} lobby north east", (6.725, 13.07, floor_z + 1.65), (0.55, 0.14, 3.3), paint)
+    box(f"Elevator {landing} control", (5.15, 15.82, floor_z + 1.35), (0.22, 0.055, 0.28), black, 0.01)
+    label(f"Elevator {landing} button label", "DOWN" if landing == "upper" else "UP", (5.15, 15.782, floor_z + 1.35), 0.06, green_led)
+    label(f"Elevator {landing} destination", "LOWER / EXIT" if landing == "upper" else "OPERATIONS / 04", (5.15, 15.77, floor_z + 1.85), 0.105, paper)
+    label(f"Elevator {landing} lintel sign", "SERVICE LIFT", (5.15, 12.985, floor_z + 2.68), 0.14, paper)
+    marker(f"Elevator{landing.title()}Arrival", (5.15, 14.43, floor_z), "elevator_landing")
+    box(f"Elevator {landing} diffuser", (5.15, 14.43, floor_z + 2.98), (1.0, 0.4, 0.025), cold_light)
+    area_light(f"Elevator {landing} illumination", (5.15, 14.43, floor_z + 2.94), (5.15, 14.43, floor_z), 65, (0.76, 0.88, 0.84), 1.0, 0.4)
+
+box("Floor lower landing", (5.15, 10.56, -6.09), (3.7, 4.88, 0.18), carpet)
+box("Ceiling backing lower landing", (5.15, 10.56, -2.66), (3.7, 4.92, 0.10), ceiling)
+box("Wall lower landing east", (7.07, 10.56, -4.35), (0.14, 4.92, 3.3), paint)
+box("Wall lower landing south", (5.15, 8.13, -4.35), (3.7, 0.14, 3.3), paint)
+box("Wall lower landing north west", (3.575, 13.07, -4.35), (0.55, 0.14, 3.3), paint)
+box("Wall lower landing west short", (3.23, 12.44, -4.35), (0.14, 1.28, 3.3), paint)
+label("Lower landing wayfinding", "EXIT  <", (5.15, 8.211, -4.15), 0.2, green_led, rotation=(math.pi / 2, 0, math.pi))
+
+# The lower corridor is intentionally long; its uninterrupted center lane remains clear.
+box("Floor exit corridor", (-22.7, 10.0, -6.09), (52, 3.6, 0.18), carpet)
+box("Ceiling backing exit corridor", (-22.7, 10.0, -2.66), (52, 3.6, 0.10), ceiling)
+for y in (8.13, 11.87):
+    box("Wall exit corridor side", (-22.7, y, -4.35), (52, 0.14, 3.3), paint)
+    box("Corridor skirting", (-22.7, y + (0.085 if y < 10 else -0.085), -5.93), (52, 0.028, 0.13), trim)
+box("Wall exit end", (-48.77, 10.0, -4.35), (0.14, 3.88, 3.3), paint)
+box("Exit door frame", (-48.67, 10.0, -4.83), (0.1, 1.75, 2.34), trim)
+box("Exit door leaf", (-48.6, 10.0, -4.89), (0.055, 1.6, 2.2), keyboard_mat, 0.006)
+box("Exit push bar", (-48.54, 10.0, -4.93), (0.055, 1.24, 0.05), steel, 0.008)
+label("Exit sign", "EXIT", (-48.53, 10.0, -3.3), 0.28, green_led, rotation=(math.pi / 2, 0, math.pi / 2))
+for x in (-5, -17, -29, -41):
+    label("Corridor exit direction", "EXIT  <", (x, 11.788, -4.3), 0.15, green_led)
+for x, y, z, power in ((0.3, 10.4, 3.2, 95), (5.15, 9.8, 3.2, 75), (5.15, 10.4, -2.8, 85)):
+    box("Building fluorescent housing", (x, y, z), (1.3, 0.42, 0.065), trim)
+    box("Building fluorescent diffuser", (x, y, z - 0.04), (1.23, 0.35, 0.01), cold_light)
+    area_light("Building illumination", (x, y, z - 0.08), (x, y, z - 3), power, (0.76, 0.88, 0.84), 1.18, 0.32)
+for index, x in enumerate(range(-1, -49, -6)):
+    box("Corridor fluorescent housing", (x, 10, -2.8), (1.3, 0.42, 0.065), trim)
+    box("Corridor fluorescent diffuser", (x, 10, -2.84), (1.23, 0.35, 0.01), warm_light if index % 3 == 0 else cold_light)
+    area_light("Corridor illumination", (x, 10, -2.88), (x, 10, -6), 90, (0.84, 0.88, 0.76), 1.18, 0.32)
 
 # A narrow, faceless service court makes the exterior feel like more of the workplace.
 current_collection = collections["07_Exterior"]
@@ -483,7 +571,7 @@ def camera(name, location, target, lens):
     data = bpy.data.cameras.new(name)
     data.lens = lens
     data.clip_start = 0.04
-    data.clip_end = 60
+    data.clip_end = 90
     obj = bpy.data.objects.new(name, data)
     current_collection.objects.link(obj)
     obj.location = location
@@ -494,6 +582,10 @@ cubicle_camera = camera("Cubicle review", (-2.5, -3.67, 1.64), (-2.65, -1.60, 1.
 room_camera = camera("Office review", (5.7, -5.48, 2.12), (-1.6, 1.0, 1.45), 24)
 outside_camera = camera("Exterior review", (6.65, 0.62, 1.64), (9.5, 0.62, -1.7), 20)
 notice_camera = camera("Workplace notice review", (5.05, -2.71, 1.70), (6.869, -2.70, 1.70), 30)
+break_camera = camera("Break room review", (2.65, 8.9, 1.64), (-0.6, 11.0, 1.35), 20)
+elevator_camera = camera("Elevator review", (5.15, 11.35, 1.64), (5.15, 15.82, 1.5), 23)
+corridor_camera = camera("Corridor review", (2.7, 10, -4.36), (-48.6, 10, -4.5), 23)
+exit_camera = camera("Exit review", (-45.5, 10, -4.36), (-48.6, 10, -4.7), 23)
 scene.camera = cubicle_camera
 scene.world = bpy.data.worlds.new("Night office ambient")
 scene.world.use_nodes = True
@@ -543,7 +635,7 @@ bpy.ops.object.select_all(action="DESELECT")
 player.select_set(True)
 bpy.context.view_layer.objects.active = player
 bpy.ops.wm.save_as_mainfile(filepath=str(SOURCE))
-for review_camera, name in ((cubicle_camera, "cubicle"), (room_camera, "office"), (outside_camera, "exterior"), (notice_camera, "workplace_notice")):
+for review_camera, name in ((cubicle_camera, "cubicle"), (room_camera, "office"), (outside_camera, "exterior"), (notice_camera, "workplace_notice"), (break_camera, "break_room"), (elevator_camera, "elevator"), (corridor_camera, "corridor"), (exit_camera, "exit")):
     scene.camera = review_camera
     scene.render.filepath = str(PREVIEWS / f"{name}.png")
     bpy.ops.render.render(write_still=True)

@@ -1,6 +1,6 @@
 # Legacy Incident Escape Room Implementation Plan
 
-Last updated: 2026-10-04. Status: phased planning draft. This wrap-up publishes documentation. The next session is authorized to build the first-level spatial baseline under G-18; other slices retain their design gates.
+Last updated: 2026-10-04. Status: G-18 spatial slices implemented, with collision checks, rendered route review, and the user's manual round trip passed. Reported elevator doorway texture fighting was corrected and verified in the rebuilt asset. Movement and encounter requirements retain separate slices and design gates.
 
 **Goal:** deliver one playable work shift connecting real debugging, surveillance resistance, evidence recording, and two ways to get home for the night, then a scoped construction exercise for basic coders. Establish a limited next-day handoff. Investigate optional real-app practice now; keep its delivery and the later campaign finale separate from the core skeleton.
 
@@ -8,7 +8,7 @@ Last updated: 2026-10-04. Status: phased planning draft. This wrap-up publishes 
 
 **Stack:** Godot 4.7 standard, GDScript, local Node/JavaScript ES modules and `node:test`, existing Python/Blender asset tooling.
 
-**Next session:** follow the [continuation prompt](CONTINUATION_PROMPT.md), resolve D-15's circulation/elevator choice, and deliver slices 0.2–0.4. Establish physical space before implementing the remaining first-shift systems. Pirates-style retirement scoring is deferred; later puzzle packs are a conditional possibility, outside this plan's current delivery.
+**Current spatial work:** slices 0.2–0.4 implement the bounded D-15 layout recorded in [ADR-0021](decisions/0021-bounded-elevator-transfer-and-first-level-layout.md): staff passage to the break room/lobby, one 6 m elevator descent/return, and a 52 m lower corridor to the exit. Building, gameplay, surveillance, and rendered round-trip checks pass; the user also completed the manual mouse/keyboard round trip and confirmed it worked. Elevator doorway texture fighting reported in that playtest was corrected through floor and sidewall joins. The rebuilt asset has zero measured overlap at both entrances, four targeted rendered views were reviewed, and all three integration checks passed again. Next settle the separate D-17 controller contract for slice 0.5 before dog-evasion tuning. Elevator puzzles and dogs remain 3.2 sub-slices; the secret movement room is later content. Pirates-style retirement scoring is deferred.
 
 Sources: [PRD](PRD-legacy-incident-escape-room.md), [product specification](PRS-legacy-incident-escape-room.md), [ADRs](decisions/README.md), and [AGENTS.md](../AGENTS.md).
 
@@ -45,7 +45,7 @@ Keep small red/green steps within each slice. Refactor only touched code when th
 
 ## Phase 0 — Establish the project contract
 
-### Slice 0.1: Documentation and scenario decisions — G-01 through G-18
+### Slice 0.1: Documentation and scenario decisions — G-01 through G-20
 
 - [x] Create AGENTS.md, PRD, product specification, immutable ADRs, phase plan, and continuity.
 - [x] Record the accepted repair/refusal choice and distinct puzzle/crime evidence.
@@ -58,6 +58,7 @@ Keep small red/green steps within each slice. Refactor only touched code when th
 - [x] Record nightly shift escapes, dystopian absurdism, Indubitably career pressure, and the candidate exposure ending. Keep app mechanics and finale conditions open.
 - [x] Record multiple endings and the option to quit after every completed stage on either route; keep outcome details and post-quit reporting open.
 - [x] Defer Pirates-style retirement scoring, retain the established story, and prepare the requested first-level building continuation.
+- [x] Record descending refusal-path elevator, guard dogs/snack alternatives, local catch retry with snack restoration, Quake-style movement, and a later surreal jump-pad room. Keep exact puzzle and physics choices open.
 - [ ] Review the proposed “Release Pending” example and resolve each remaining decision immediately before its dependent slice.
 
 **Files:** the documentation linked above. **Proof:** links resolve, capability IDs align, accepted and proposed behavior are distinct, and the diff contains only authorized documentation. No gameplay tests are needed for this slice.
@@ -66,34 +67,45 @@ Keep small red/green steps within each slice. Refactor only touched code when th
 
 **Player outcome:** leave the existing office through a genuine opening, enter a recognizable break room, and return to the workstation.
 
-**Gate:** D-15 circulation sequence. **Likely files:** `scripts/build-rifkin-office.py`, generated `assets/blender/rifkin_office.blend` and `godot/assets/office/rifkin_office.glb`, `godot/scripts/office_room.gd`, and the existing scene only where needed. Preserve existing named objects and coordinates referenced by interactions/tests.
+**D-15 choice:** north staff passage with approximately 1.07 m clear width and continuous floor support; its door opens once by sliding 1.16 m left. A 3.7 m wide upper lobby connects west through an open 1.65 m doorway to a modest 6 m by 6 m break room. Route functionality is verified by scripted traversal, rendered views, and the user's manual round trip. **Files:** `scripts/build-rifkin-office.py`, generated `assets/blender/rifkin_office.blend` and `godot/assets/office/rifkin_office.glb`, `godot/scripts/office_room.gd`, and the existing scene only where needed. Preserve existing named objects and coordinates referenced by interactions/tests.
 
-- [ ] Review a compact layout in the existing office's scale. Split the wall behind the service door and provide floor support; clearing the decorative leaf alone is insufficient.
-- [ ] Red/green for any new door or collision behavior: prove the approved passage is usable and closed geometry blocks movement where intended, then make the smallest consistent change. Use visual review for furniture/art rather than tests that merely repeat mesh coordinates.
-- [ ] Add a modest break room using existing materials and asset patterns. Leave exact future clue placement and surveillance rules undecided.
-- [ ] Verify: walk office → break room → workstation; inspect player clearance, floor seams, lighting, and preserved workstation/notice/net interactions.
+- [x] Review the implemented north-wall opening, continuous floor joins, and modest break-room/lobby layout at the existing office's scale.
+- [x] Red/green for the one-shot staff-door interaction and collision behavior: prove the closed leaf blocks passage and the opened passage supports walking. Use visual review for furniture/art rather than tests that merely repeat mesh coordinates.
+- [x] Inspect the break-room furniture and existing material/asset patterns. Leave exact future clue placement and surveillance rules undecided.
+- [x] Verify scripted office → break room → workstation traversal, floor support, rendered lighting, and preserved workstation/notice/net interactions.
 
 ### Slice 0.3: Reach and use the approved elevator area — G-18
 
-**Player outcome:** reach the elevator from the office/break-room connection and use whatever bounded function D-15 selects.
+**Player outcome:** reach the elevator from the office/break-room connection, descend toward the exit corridor, and return during spatial validation.
 
-**Gate:** D-15 elevator purpose and circulation; travel is not implicitly required by adding an elevator prop. **Depends on:** 0.2. **Likely files:** the same asset generator/exports and local room interaction/collision code; extend the current raycast/action branches instead of adding a general interaction framework.
+**D-15 choice:** matching static cab interiors 6 m apart, with 1.4 m entries and back-wall controls reached through the existing 2.5 m interaction ray. One E descent/return pauses walking, clears velocity, preserves view/horizontal position, and uses a 0.3-second fade out, 0.4-second black hold, and 0.3-second fade in. Route functionality is verified by scripted traversal, rendered views, and the user's manual round trip. The final refusal puzzle is D-16 work in 3.2a. **Depends on:** 0.2. **Files:** the same asset generator/exports and local room interaction/collision code; retain the current raycast/action branches.
 
-- [ ] Red: if doors or travel are selected, a focused integration check exercises the reviewed interaction, destination, and return. Do not test hypothetical floors or failure modes.
-- [ ] Green: build the recognizable elevator area and the selected cab/door/travel behavior. Use one useful connection; no tower, floor-selection system, or campaign transition is required.
-- [ ] Verify: inspect access, controls, door clearance, and return to the workstation in the running game. Preserve mouse capture and existing prompts.
+- [x] Red: a focused integration check exercises control targeting, descent, return, walking pause, velocity clearing, and preserved view. Do not test hypothetical floors or failure modes.
+- [x] Green: validate the recognizable paired cabs and one bounded descent/return connection. Keep moving platforms, a shaft/tower, floor selection, final puzzle gates, and campaign transitions outside this slice.
+- [x] Verify scripted access/return, door clearance, and rendered elevator prompts while retaining mouse capture behavior.
 
 ### Slice 0.4: Follow the long corridor to the exit — G-18
 
 **Player outcome:** follow the approved circulation from the office/elevator into a long corridor, reach an identifiable exit, and return through all operative spaces.
 
-**Gate:** D-15 exit location; future locked-release rules remain D-03 work. **Depends on:** 0.2 and 0.3. **Likely files:** the same geometry/collision surfaces; adjust lighting or camera range only where the selected layout demonstrates a need.
+**D-15 choice:** lower landing opens west into a 52 m long, 3.6 m wide clear corridor with repeated lighting/wayfinding and a solid exit at its far end. Walking camera far range is 90 m. Route functionality is verified by scripted traversal, rendered views, and the user's manual round trip. Future locked-release rules remain D-03 work. **Depends on:** 0.2 and 0.3. **Files:** the same geometry/collision surfaces and the existing camera setting.
 
-- [ ] Build the corridor and recognizable exit using the existing scale/materials. Check that camera clipping does not erase the intended long sightline.
-- [ ] Verify focused movement/interaction behavior and run both existing headless integration checks. Walk the complete route manually to find collision seams, obstructing props, unreadable signs, and lighting issues.
-- [ ] Update as-built layout, D-15's chosen scope, and continuity. Record a consequential how/why choice in a new ADR. Physical arrival at the exit does not claim nightly release, route completion, resignation, or a campaign ending.
+- [x] Inspect the implemented corridor and recognizable exit using the existing scale/materials. Check that the 90 m camera range preserves the intended long sightline.
+- [x] Verify focused movement/interaction behavior, both existing headless integration checks, and the complete scripted route with rendered first-person views.
+- [x] Walk the route with manual mouse/keyboard input: the user completed the round trip and confirmed it worked. Reported elevator doorway texture fighting was corrected through floor and sidewall joins, then verified by overlap measurements, rendered views, and regression checks. The user has not yet retested the visual correction.
+- [x] Update as-built layout, D-15's chosen scope, and continuity. Record a consequential how/why choice in a new ADR. Physical arrival at the exit does not claim nightly release, route completion, resignation, or a campaign ending.
 
 These spatial slices establish the operative building only. The NDA, messenger, notebook, helper credits, surveillance resistance, route puzzles, and campaign choices retain their existing later slices. Do not bundle them into the geometry task.
+
+### Slice 0.5: Learn and build speed through strafe jumping — G-19
+
+**Player outcome:** walk normally, jump, and use coordinated strafing and mouse direction to gain and carry speed under a consistent movement contract.
+
+**Gate:** D-17 reviewed physics/tuning, jump input/timing, stopping, and controls teaching. This is a separate behavior slice, not implicit work in the geometry continuation. **Likely files:** `godot/scripts/office_player.gd`, relevant player/scene settings, and focused existing integration checks. No movement dependency or wholesale controller framework is approved.
+
+- [ ] Red: tests distinguish ordinary movement from the approved accelerating strafe-jump sequence and verify required landing/stopping behavior. Test the accepted fixed-step/input contract; do not add matrices for every possible display rate.
+- [ ] Green: implement the smallest ground/air velocity and jump changes for that contract. Keep mouse capture, workstation transitions, and ordinary navigation working.
+- [ ] Verify: teach controls in a safe short space, play the route at ordinary and skilled speeds, and check collision clearance and stopping at interactables. Tune dog evasion only after this behavior is validated.
 
 ## Phase 1 — Introduce coercion and teach evidence ownership
 
@@ -196,9 +208,13 @@ These spatial slices establish the operative building only. The NDA, messenger, 
 
 ### Slice 3.2: Refuse the assignment and escape — G-01, G-02, G-03, G-04, G-09, G-10
 
-**Player outcome:** use surveillance cover and a discoverable maintenance exception to get home for the night with the incident unresolved, collecting different puzzle clues and subtle physical evidence of murders after threatened NDA disclosures.
+**Player outcome:** use surveillance cover and the reviewed elevator puzzle to descend, pass guard dogs through movement or the reserved snack, and get home with the incident unresolved. Collect distinct puzzle clues and subtle physical crime evidence.
 
-**Gates:** D-03 route procedure and D-07 approved physical records. **Depends on:** 3.1's physical exit behavior, the approved bypass, and the agreement content from 1.0. **Likely files:** `godot/scripts/office_room.gd`, `godot/scripts/panopticon.gd`, existing level content, `godot/tests/gameplay_integration.gd`, `godot/tests/surveillance_integration.gd`.
+**Gates:** D-03 route procedure, D-07 records, D-16 elevator/dog/snack contract, and D-17 movement tuning. **Depends on:** spatial slices, 0.5 before skill-evasion tuning, 3.1's physical exit behavior, the approved bypass, and agreements from 1.0. **Likely files:** `godot/scripts/office_room.gd`, `godot/scripts/panopticon.gd`, existing level content, and relevant integration tests. Deliver the following manageable sub-slices before the complete route.
+
+**3.2a — Earn elevator descent (G-04, G-18):** choose the puzzle approach and sources; red/green the input acknowledgment, accepted descent, rejected/reset attempt, and approved observation consequence. Verify its necessary clues are accessible with the code unrepaired. Keep the exact sequence proposed until reviewed.
+
+**3.2b — Pass the dogs with snack or movement (G-18, G-19):** choose snack acquisition/use and readable dog behavior; prove each alternative reaches the same required refusal evidence and exit opportunity. If caught, return to the corridor entrance and restore the snack if used. Red/green that local retry without replaying the incident; settle its clock/state contract and wasted-snack behavior before implementation. Test usable evasion with the validated controller, not hypothetical physics. Do not require the secret movement room or punish snack use through an inferior ending.
 
 - [ ] Red: refusal can end the shift while deploy still fails, without resignation or final exposure; its puzzle and crime evidence differ from repair's; it needs no repair-only clue.
 - [ ] Red: the approved physical records are reachable and preserve the authored identities, dates, and NDA references without automatic accusation labels or notebook deductions.
@@ -325,6 +341,10 @@ Research is complete; placement here is a delivery proposal. Define the core bas
 - [ ] Red: a focused integration check exposes the missing create/run/use/stop/reopen behavior; story resets and IT wipes do not erase practice projects or modify story progress. Add supported runtime-failure checks justified by the proof.
 - [ ] Green: implement that one reviewed workflow and its controls. Use a defined runtime and built-in libraries first; broader package installation is a later decision.
 - [ ] Verify: adapt one requirement and observe the player's explanation of responsibility choices. Record startup time, disk/memory use, setup friction, and actual isolation/lifecycle results before deciding distribution or expanding scope.
+
+## Later movement playground — G-19, G-20
+
+After the controller is validated, review D-17's optional secret-room access, jump-pad/course rules, resets, teaching, and clock/reward policy. Deliver one enter → learn → attempt → retry → leave course before adding ascending difficulties. Oversized authored geometry is a sufficient first expression of impossible interior space; no portal/rendering framework is required. Keep this distinct from real-app practice and required refusal clues. This is later content, not authorized expansion of the current geometry continuation.
 
 ## Later campaign content — G-16, G-17
 
