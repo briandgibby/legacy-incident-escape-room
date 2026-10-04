@@ -4,7 +4,7 @@ Last updated: 2026-10-04 (America/New_York).
 
 ## Resume here
 
-Documentation through the building continuation was committed and pushed to `origin/main` as `d7b454f`. The subsequent elevator/dogs/movement documentation remains uncommitted and was preserved. Spatial slices 0.2–0.4 are now implemented and verified in the working tree; no commit or push was made. Read [AGENTS.md](AGENTS.md), the [product specification](docs/PRS-legacy-incident-escape-room.md), [ADR-0021](docs/decisions/0021-bounded-elevator-transfer-and-first-level-layout.md), and the [phase plan](docs/IMPLEMENTATION_PLAN.md).
+Spatial slices 0.2–0.4, the elevator surface correction, and related design documentation through ADR-0021 were committed and pushed to `origin/main` as `53279f4`. The [continuation prompt](docs/CONTINUATION_PROMPT.md) now targets D-17 controller review and slice 0.5. Read [AGENTS.md](AGENTS.md), the [product specification](docs/PRS-legacy-incident-escape-room.md), [ADR-0019](docs/decisions/0019-quake-style-movement-and-impossible-practice-space.md), [ADR-0021](docs/decisions/0021-bounded-elevator-transfer-and-first-level-layout.md), and the [phase plan](docs/IMPLEMENTATION_PLAN.md). Check current Git history/status for the latest handoff documentation and preserve any new work.
 
 Next action: settle the separate D-17 controller contract before slice 0.5 and dog-evasion tuning. The user completed the office → break room → elevator → lower corridor → exit and return with mouse/keyboard and confirmed it worked. Reported elevator doorway texture fighting is corrected in the rebuilt asset; restart the open game to load it. D-15's bounded layout/transfer is recorded in ADR-0021. Choose the elevator puzzle under D-16 before 3.2a; the maintenance-exception sequence remains proposed. If caught, return to the corridor entrance and restore the snack if used; retry clocks and other state details remain open. The secret movement room, retirement scoring, campaign outcomes, and practice delivery remain outside this spatial implementation.
 
@@ -35,7 +35,7 @@ Accepted decisions/directions: ADR-0001 through ADR-0020 in the [index](docs/dec
 
 ## Current implementation
 
-Gameplay baseline: `c243f21`; current HEAD is documentation commit `d7b454f` on `main`. Existing uncommitted documentation was preserved during the spatial implementation below. Current code/assets and checks establish the implemented state.
+Earlier gameplay baseline: `c243f21`; spatial implementation baseline: `53279f4` on `main`, pushed to `origin/main`. Existing uncommitted documentation was preserved and included in that publication at the user's request. Subsequent handoff documentation does not change gameplay. Current code/assets and checks establish the implemented state.
 
 - One checkout incident uses real JavaScript tests and a production replay. Its shipped source deliberately fails the migrated coupon case.
 - Panopticon reacts to workstation and room actions with alerts, eyes, and sounds. It does not yet enforce detection consequences or support bypasses.
@@ -174,5 +174,11 @@ Practice research recommendation: first prove one local JavaScript web app with 
 - Rebuilt the Blender source, GLB, and affected previews, then imported them into Godot. Previously overlapping floor and jamb surfaces measured zero overlap afterward. Reviewed four targeted Forward+ views; building, gameplay, and surveillance integration checks all passed with clean logs and isolated saves.
 - The open manual-playtest instance must restart to load the rebuilt geometry; the user has not yet retested the visual correction. No dependencies, commits, or pushes.
 - Process lesson: collision clearance alone does not prove a clean visual join. Review visible floor and double-sided wall faces for coplanar overlap alongside passage clearance. Next: settle D-17's controller contract.
+
+### 2026-10-04 — Publication and controller handoff
+
+- At the user's request, committed and pushed the accumulated building/assets/tests and design progress as `53279f4`. A fresh run of all three isolated integration checks passed with zero failures and clean engine logs; affected-document links and diff formatting also passed.
+- Replaced the completed geometry continuation with the next planned slice: review the controller portion of D-17, then implement and playtest slice 0.5. Updated stale current-state wording and the verification command list. No movement parameters, dog behavior, or later course rules were selected in this handoff.
+- Keep the surface-join lesson from the playtest alongside ordinary/skilled traversal verification. Next: use the continuation prompt in a new session; future commits/pushes still need authorization there.
 
 Keep future entries concise: what changed, why, decisions, checks and their actual results, remaining risks, one lesson, and the next action. Durable detail belongs in linked documents, not repeated transcripts.

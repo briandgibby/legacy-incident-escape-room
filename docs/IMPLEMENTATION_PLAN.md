@@ -101,7 +101,7 @@ These spatial slices establish the operative building only. The NDA, messenger, 
 
 **Player outcome:** walk normally, jump, and use coordinated strafing and mouse direction to gain and carry speed under a consistent movement contract.
 
-**Gate:** D-17 reviewed physics/tuning, jump input/timing, stopping, and controls teaching. This is a separate behavior slice, not implicit work in the geometry continuation. **Likely files:** `godot/scripts/office_player.gd`, relevant player/scene settings, and focused existing integration checks. No movement dependency or wholesale controller framework is approved.
+**Gate:** D-17 reviewed physics/tuning, jump input/timing, stopping, and controls teaching. This is the next behavior slice after the completed spatial work; the [continuation prompt](CONTINUATION_PROMPT.md) begins with its contract review. **Likely files:** `godot/scripts/office_player.gd`, relevant player/scene settings, and focused integration checks. No movement dependency or wholesale controller framework is approved.
 
 - [ ] Red: tests distinguish ordinary movement from the approved accelerating strafe-jump sequence and verify required landing/stopping behavior. Test the accepted fixed-step/input contract; do not add matrices for every possible display rate.
 - [ ] Green: implement the smallest ground/air velocity and jump changes for that contract. Keep mouse capture, workstation transitions, and ordinary navigation working.
@@ -344,7 +344,7 @@ Research is complete; placement here is a delivery proposal. Define the core bas
 
 ## Later movement playground — G-19, G-20
 
-After the controller is validated, review D-17's optional secret-room access, jump-pad/course rules, resets, teaching, and clock/reward policy. Deliver one enter → learn → attempt → retry → leave course before adding ascending difficulties. Oversized authored geometry is a sufficient first expression of impossible interior space; no portal/rendering framework is required. Keep this distinct from real-app practice and required refusal clues. This is later content, not authorized expansion of the current geometry continuation.
+After the controller is validated, review D-17's optional secret-room access, jump-pad/course rules, resets, teaching, and clock/reward policy. Deliver one enter → learn → attempt → retry → leave course before adding ascending difficulties. Oversized authored geometry is a sufficient first expression of impossible interior space; no portal/rendering framework is required. Keep this distinct from real-app practice and required refusal clues. This is later content, outside controller slice 0.5.
 
 ## Later campaign content — G-16, G-17
 
@@ -357,6 +357,7 @@ For the proposed exposure ending, future validation must distinguish successful 
 From the repository root, with the project's Godot executable available:
 
 ```powershell
+godot --headless --path godot --script res://tests/building_integration.gd
 godot --headless --path godot --script res://tests/gameplay_integration.gd
 godot --headless --path godot --script res://tests/surveillance_integration.gd
 ```
@@ -372,4 +373,4 @@ npm run simulate
 
 Expected for the shipped start: nonzero exit for the migrated discount mismatch. Expected after a correct fix in a disposable copy: both pass and runner deployment accepts. Do not patch the source fixture to make ordinary repository checks appear green.
 
-For documentation changes, inspect links, decision status, capability coverage, and diff scope. For art or scene changes, inspect the affected view in the game. No gameplay tests were executed for the current documentation-only delivery.
+For documentation changes, inspect links, decision status, capability coverage, and diff scope. For art or scene changes, inspect the affected view in the game. Building, gameplay, and surveillance checks passed on 2026-10-04, including a fresh run before publishing the spatial implementation. The user passed the manual round trip; the subsequent elevator surface correction received targeted rendered review. New controller behavior still requires its own checks and playtest.

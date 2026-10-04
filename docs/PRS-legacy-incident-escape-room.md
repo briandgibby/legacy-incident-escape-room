@@ -31,7 +31,7 @@ Governing decisions:
 - [ADR-0019](decisions/0019-quake-style-movement-and-impossible-practice-space.md): Quake-style strafe-jump acceleration and a later secret jump-pad room with deliberately impossible interior scale.
 - [ADR-0020](decisions/0020-local-guard-dog-retry-and-snack-restoration.md): being caught returns the player to the corridor entrance and restores the snack if used.
 
-**Current** describes the inspected `c243f21` gameplay baseline plus the uncommitted spatial implementation verified on 2026-10-04. **Required** describes an explicit user requirement or governing decision. **Proposed** describes an implementation or narrative recommendation awaiting a decision. A requirement's presence does not mean it has been built.
+**Current** describes the inspected `c243f21` gameplay baseline plus the spatial implementation verified on 2026-10-04 and committed as `53279f4`. **Required** describes an explicit user requirement or governing decision. **Proposed** describes an implementation or narrative recommendation awaiting a decision. A requirement's presence does not mean it has been built.
 
 ## 2. Architecture and stack
 

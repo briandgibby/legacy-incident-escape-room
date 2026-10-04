@@ -1,47 +1,43 @@
-# First-level building continuation prompt
+# Controller slice continuation prompt
 
 Paste the following into a new session working in `C:\Users\Jack Thompson\git-projects\legacy-incident-escape-room`.
 
 ---
 
-Build the first level's operative building spaces in Legacy Incident Escape Room.
+Continue Legacy Incident Escape Room with implementation-plan slice 0.5: Quake 3 Arena-like movement and strafe-jump acceleration (G-19).
 
 Repository: https://github.com/briandgibby/legacy-incident-escape-room
 Local workspace: `C:\Users\Jack Thompson\git-projects\legacy-incident-escape-room`
 
-This session is authorized to implement the bounded spatial expansion: a break room, an elevator, and a long corridor leading to the exit, connected to the existing first-person office. Establish the parts of the building needed for play. Work in manageable vertical slices and finish with a usable layout in the running game.
+The spatial implementation and related design progress were committed and pushed to `origin/main` as `53279f4`; a subsequent documentation commit prepares this handoff. Inspect current Git status and history first and preserve all uncommitted work. Read `AGENTS.md`, `SESSION_CONTINUITY.md`, PRD G-19/G-20, the PRS movement section and D-17, ADRs 0019/0021, and implementation-plan slice 0.5. Investigate only the affected controller, room transitions, scene/input settings, and relevant tests.
 
-Read `AGENTS.md`, `SESSION_CONTINUITY.md`, the relevant PRD/spec sections (G-18 through G-20 and D-15 through D-17), ADRs 0016–0020, and implementation slices 0.2–0.4. Inspect Git status first and preserve all uncommitted work. Inspect only the affected scene, asset generator, room/player scripts, and relevant integration checks. The gameplay baseline before the documentation commit was `c243f21`; use current files and Git history as the source of truth.
+Slices 0.2–0.4 already work: the office's staff door opens into the break room/lobby, paired elevator cabs provide one 6 m descent/return, and a 52 m corridor reaches a recognizable solid exit. The user completed the mouse/keyboard round trip and confirmed functionality. Reported elevator texture fighting was corrected by removing overlapping floor and sidewall surfaces; the rebuilt asset passed measured overlap checks, targeted rendered review, and all three integration checks. The user has not yet retested that visual correction. Preserve these spaces and joins. Physical exit arrival does not implement nightly release, resignation, or campaign completion.
 
-The elevator now descends from the office toward the long refusal exit corridor; do not re-ask whether descent is wanted. Propose a compact connection from office to break room/elevator, one descent to the lower corridor, and return during layout validation. State a brief layout and proceed using practical provisional dimensions and furnishings. Ask one question only if a remaining consequential layout/travel choice materially changes behavior or scope. The elevator's final refusal puzzle remains a separate reviewed slice.
+Begin by reviewing a compact D-17 controller contract. Quake-style strafe-jump acceleration is already wanted; do not re-ask that direction. Recommend a practical starting contract covering:
 
-Plan space for the accepted later encounter: an elevator puzzle allows unauthorized descent, then guard dogs discourage refusal-path departure. The reserved break-room snack offers an alternative to movement evasion. If caught, the player returns to the corridor entrance and gets the snack back if used. Exact puzzle, snack, dog, and retry-clock rules remain D-16 choices; do not invent or implement them in this spatial task.
+- Ordinary ground speed, acceleration, friction, and stopping at interactables.
+- Directional air acceleration and speed gained/carried through coordinated strafing and mouse direction.
+- Jump key, press versus hold/repeat behavior, gravity/jump height, and momentum on landing.
+- Practical speed bounds, physics-step/input handling, and a safe short controls lesson.
 
-Quake 3 Arena-like strafe-jump acceleration is an explicit movement requirement. Current movement has no jumping; controller slice 0.5 needs its own reviewed D-17 contract before implementation and before dog-evasion tuning. Preserve current controls during this geometry task and allow useful clearances/sightlines without assuming future speeds. Later, a secret room contains jump pads and escalating defrag-style courses, with huge interiors exceeding the narrow exterior footprint. That intentional surreal direction does not require building the room, its courses, or special portal rendering now.
+Explain the consequential choices and ask one focused review question before implementing the unsettled contract. Routine implementation choices can use the simplest existing-pattern approach. Exact Quake constants, a faithful port, a new tick rate, copied source, and new dependencies are not approved. Use primary movement documentation/source if needed to substantiate the proposed physics. Settle only the controller portion of D-17 now; later course rules stay open.
 
-Keep the established story: dystopian absurdism, an ordinary escape earns going home for the night, and the player may quit or continue employment after each completed shift. Repair and refusal will be independently viable routes with distinct clues and crime evidence. Focus on that authored story; Pirates-style retirement/accomplishment scoring is deferred. A later puzzle-pack product is only a conditional idea.
+Once the controller contract is reviewed, implement slice 0.5 in small red/green steps. Extend `godot/scripts/office_player.gd` and only necessary scene/input settings. Keep the existing `CharacterBody3D`, mouse look/capture, named-mesh collision convention, and local interactions; add no controller framework or unrelated refactor. Preserve workstation/notice transitions and the elevator's walking pause and velocity reset, including the new controller's momentum/jump state as required by those existing transitions.
 
-The current office uses `godot/office.tscn`, which instances `godot/assets/office/rifkin_office.glb`. The asset is generated by `scripts/build-rifkin-office.py` and saved with its Blender source at `assets/blender/rifkin_office.blend`. `godot/scripts/office_room.gd` handles named-mesh collisions and local raycast interactions; `office_player.gd` handles movement and mouse look. Extend these patterns. The service door currently has an uninterrupted wall behind it: make an actual opening and floor connection, not just a visually open door. New geometry needs appropriate collision recognition. Preserve existing named objects and coordinates used by workstation, notice, and surveillance interactions/tests. Use existing materials and tooling; add no dependencies or general room/quest/elevator framework.
+Tests should distinguish ordinary navigation, jumping, accelerating strafe jumps, and the approved landing/stopping behavior. Observe each focused failure for the intended reason before implementation. Exercise the real controller and collisions under the accepted physics-step/input contract. The existing building test scripts its own walking velocity and disables player physics, so its route pass alone does not verify new movement. Add only the focused controller coverage needed; avoid hypothetical frame-rate matrices.
 
-Deliver these slices:
+Teach the controls in a short safe existing space with the smallest useful feedback. The secret movement room is later work. Play the office → break room → elevator → corridor → exit and return at ordinary and skilled speeds, checking doorframes, ceilings, stopping near controls, mouse capture, and workstation return. Inspect visible surface joins as well as collision clearance: the manual playtest found coplanar elevator surfaces that scripted traversal missed. Report manual verification you cannot perform and arrange a user playtest when needed.
 
-1. Connect the office to a recognizable, usable break room. The player can leave the workstation, enter the room, and return. Keep furnishing modest and the liminal, exploitative workplace atmosphere coherent.
-2. Add the elevator area with one bounded descent to the lower corridor and return for spatial validation. Keep the final puzzle gate for its later slice. Do not build a complete tower or floor-selection system.
-3. Build the long corridor to a recognizable exit, following the selected circulation. Make the entire route traversable with readable scale, lighting, and sightlines. Check the camera's current far range if it clips the chosen corridor. Allow returning to the workstation.
-
-Keep the workstation incident, existing notices, window/retention nets, Panopticon reactions, and controls working. Leave the shipped JavaScript incident deliberately broken. Physical arrival at the exit establishes a place for future nightly departure; it does not by itself implement shift completion, resignation, or a finale.
-
-The NDA opening, employee messenger, notebook, Dantalion credits, surveillance bypasses, elevator puzzle, dog/snack mechanics, new evidence puzzles, and final repair/refusal release gates remain later slices. Do not bundle them into this layout task, auto-identify important clues, or invent story conclusions to fill empty rooms. The new controller and later secret movement minigame also have separate slices. Real-app practice remains a research direction.
-
-Use TDD for new door, interaction, elevator, or movement behavior: observe a focused failure for the intended reason, make the smallest passing change, and run relevant regressions. Use visual review for geometry and art. Validate actual doorway clearance, floor support, any selected closed-door blocking, elevator access/return, and the complete walking route. Avoid tests that only repeat generated mesh coordinates or hypothetical floors.
-
-Run the existing checks from the repository root:
+Run the relevant checks from the repository root, keeping saves isolated:
 
 ```powershell
+godot --headless --path godot --script res://tests/building_integration.gd
 godot --headless --path godot --script res://tests/gameplay_integration.gd
 godot --headless --path godot --script res://tests/surveillance_integration.gd
 ```
 
-Use `docs/GODOT_SETUP.md` and the existing launcher if the Godot alias is unavailable. Keep integration saves isolated from the player's sandbox. Then visually walk office → break room → elevator → corridor → exit and back, adapting the order to the agreed layout. Inspect collision seams, obstructing props, lighting, prompts, mouse capture, and workstation access. Report any verification you cannot perform.
+Use `docs/GODOT_SETUP.md` and the existing launcher if the Godot alias is unavailable. Keep any playable test launch isolated from the player's ordinary incident sandbox: startup refreshes the incident copy. Leave the shipped JavaScript incident intentionally broken; its starting test/simulation failures are puzzle behavior.
 
-Update only affected as-built spec/plan sections and concise session continuity. Record a consequential layout/elevator how/why choice in a new numbered ADR; never edit earlier ADRs. Retain one evidence-backed process improvement from the slice. Finish by reporting what changed, the actual checks and visual review performed, and remaining layout or gameplay limitations. Do not commit or push in this new session unless I authorize it there.
+Finish this controller slice before moving to Phase 1. Do not bundle the elevator puzzle, dogs/snack, nightly release, NDA opening, notebook, messenger, Dantalion credits, new evidence, campaign outcomes, or real-app practice into it. Dog evasion must be tuned only after movement is validated. For later D-16 work, preserve the accepted corridor-entrance retry and used-snack restoration without inventing clock/reset penalties. The secret room, jump pads, and defrag-style courses remain later G-20 work. Both repair and refusal must remain independently viable; advanced movement cannot become an undisclosed prerequisite.
+
+Keep changes minimal and preserve the established dystopian story and existing stack. Update only affected as-built PRS/plan sections and concise session continuity. Record consequential HOW/WHY choices in a new numbered ADR and update the index; never edit recorded ADRs or invent approval. Report what changed, actual verification, remaining tuning/playtest limits, and one evidence-backed process improvement. Do not commit or push in the new session unless I authorize it there.
